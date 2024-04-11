@@ -20,6 +20,7 @@ public class RuleEngineConfig {
 
     @Bean
     public RuleEngineManagement ruleEngineManagement() {
+
         return new RuleEngineManagement(gatewayService, gatewayConsumerFactory());
     }
 }
