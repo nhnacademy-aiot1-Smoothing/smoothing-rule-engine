@@ -69,9 +69,8 @@ public class MqttGatewayConsumer implements GatewayConsumer, MqttCallback {
     }
 
     @Override
-    public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-        ruleEngineManagement.consume(new MqttSensorData(s, new String(mqttMessage.getPayload())));
-        System.out.println(s+":"+mqttMessage);
+    public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+        ruleEngineManagement.consume(new MqttSensorData(topic, new String(mqttMessage.getPayload())));
     }
 
     @Override

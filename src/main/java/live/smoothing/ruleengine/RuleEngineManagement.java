@@ -1,6 +1,7 @@
 package live.smoothing.ruleengine;
 
 import live.smoothing.ruleengine.gateway.dto.GatewayGenerateRequest;
+import live.smoothing.ruleengine.gateway.entity.Gateway;
 import live.smoothing.ruleengine.gateway.service.GatewayService;
 import live.smoothing.ruleengine.mq.consumer.GatewayConsumer;
 import live.smoothing.ruleengine.mq.consumer.GatewayConsumerFactory;
@@ -19,6 +20,16 @@ public class RuleEngineManagement {
     public RuleEngineManagement(GatewayService gatewayService, GatewayConsumerFactory gatewayConsumerFactory) {
         this.gatewayService = gatewayService;
         this.gatewayConsumerFactory = gatewayConsumerFactory;
+
+        init();
+    }
+
+    private void init() {
+        List<Gateway> gateways = gatewayService.getGateways();
+        for (Gateway g : gateways) {
+            addGateway(new GatewayGenerateRequest(g.getGatewayIp(), g.getGatewayPort(), g.getGatewayName(), g.getGatewayType()));
+        }
+        // 센서 목록 가져와서 각각의 게이트웨이에 추가
     }
 
     public void consume(SensorData sensorData) {
