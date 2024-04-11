@@ -7,11 +7,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "gateways")
 public class Gateway {
+
     @Id
     @Column(name = "gateway_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
