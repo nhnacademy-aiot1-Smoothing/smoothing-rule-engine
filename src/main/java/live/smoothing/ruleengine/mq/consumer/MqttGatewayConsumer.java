@@ -18,8 +18,6 @@ public class MqttGatewayConsumer implements GatewayConsumer, MqttCallback {
     private final String gatewayName;
     private final int port;
     private final String clientId;
-    private final String userName;
-    private final String password;
 
     MqttClient client;
 
@@ -48,8 +46,6 @@ public class MqttGatewayConsumer implements GatewayConsumer, MqttCallback {
         client = new MqttClient("tcp://" + gatewayUri + ":" + port, clientId);
         client.setCallback(this);
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setUserName(userName);
-        options.setPassword(password.toCharArray());
         options.setAutomaticReconnect(automaticReconnect);
         options.setCleanSession(cleanSession);
         options.setConnectionTimeout(connectionTimeout);
@@ -75,10 +71,12 @@ public class MqttGatewayConsumer implements GatewayConsumer, MqttCallback {
     @Override
     public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
         ruleEngineManagement.consume(new MqttSensorData(s, new String(mqttMessage.getPayload())));
+        System.out.println(s+":"+mqttMessage);
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
     }
+
 }
