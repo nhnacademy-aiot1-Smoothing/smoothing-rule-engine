@@ -5,11 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class GatewayGenerateRequest {
+
     private String gatewayIp;
+
     private int gatewayPort;
+
     private String gatewayName;
+
     private String gatewayType;
 }
