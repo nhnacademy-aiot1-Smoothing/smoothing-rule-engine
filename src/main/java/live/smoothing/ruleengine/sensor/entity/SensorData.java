@@ -1,4 +1,4 @@
-package live.smoothing.ruleengine.sensor.service.entity;
+package live.smoothing.ruleengine.sensor.entity;
 
 public interface SensorData {
 

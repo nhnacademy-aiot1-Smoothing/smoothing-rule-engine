@@ -1,7 +1,7 @@
 package live.smoothing.ruleengine.mq.consumer;
 
 import live.smoothing.ruleengine.RuleEngineManagement;
-import live.smoothing.ruleengine.sensor.service.entity.MqttSensorData;
+import live.smoothing.ruleengine.sensor.entity.MqttSensorData;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
