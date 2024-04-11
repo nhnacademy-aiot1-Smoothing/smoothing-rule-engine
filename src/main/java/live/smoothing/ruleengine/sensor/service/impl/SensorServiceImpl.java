@@ -8,6 +8,7 @@ import live.smoothing.ruleengine.sensor.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class SensorServiceImpl implements SensorService {
         return sensorRepository.findByGatewayId(gatewayId);
     }
 
+    @Transactional
     @Override
     public void saveSensor(SensorRegisterRequest request) {
 
