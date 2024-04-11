@@ -7,6 +7,7 @@ import live.smoothing.ruleengine.gateway.service.GatewayService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service("gatewayService")
@@ -32,7 +33,7 @@ public class GatewayServiceImpl implements GatewayService {
     public String getGatewayName(Integer gatewayId) {
 
         return gatewayRepository.findById(gatewayId)
-                .get()
+                .orElseThrow(() -> new EntityNotFoundException("게이트웨이 없음"))
                 .getGatewayName();
     }
 
