@@ -22,7 +22,7 @@ public class GatewayServiceImpl implements GatewayService {
         String ip = request.getGatewayIp();
         String name = request.getGatewayName();
 
-        if(gatewayRepository.existsByGatewayIpOrGatewayNameExists(ip, name)) {
+        if(!gatewayRepository.existsByGatewayIpOrGatewayNameExists(ip, name)) {
 
             Gateway gateway = new Gateway(null, request.getGatewayIp(), request.getGatewayPort(), request.getGatewayName(), request.getGatewayType());
             gatewayRepository.save(gateway);
