@@ -15,6 +15,7 @@ public class RuleEngineConfig {
 
     @Bean
     public GatewayConsumerFactory gatewayConsumerFactory() {
+
         return new MqttGatewayConsumerFactory();
     }
 
