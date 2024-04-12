@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface GatewayService {
 
-    void addGateway(GatewayGenerateRequest request);
+    Gateway addGateway(GatewayGenerateRequest request);
 
     String getGatewayName(Integer gatewayId);
 

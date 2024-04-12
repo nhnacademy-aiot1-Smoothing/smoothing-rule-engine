@@ -7,10 +7,8 @@ import java.util.Optional;
 
 public interface GatewayRepository extends JpaRepository<Gateway, Integer> {
 
-    Object save(Gateway gateway);
-
     Optional<Gateway> findById(Integer gatewayId);
 
-    Boolean existsByGatewayIpOrGatewayNameExists(String ip, String name);
+    boolean existsByGatewayIpOrGatewayName(String ip, String name);
 
 }
