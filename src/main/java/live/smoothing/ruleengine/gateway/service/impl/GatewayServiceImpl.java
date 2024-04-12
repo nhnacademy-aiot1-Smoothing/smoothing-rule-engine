@@ -18,7 +18,6 @@ public class GatewayServiceImpl implements GatewayService {
 
     @Override
     public Gateway addGateway(GatewayGenerateRequest request) {
-
         String ip = request.getGatewayIp();
         String name = request.getGatewayName();
 
