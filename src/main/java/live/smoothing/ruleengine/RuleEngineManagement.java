@@ -5,7 +5,9 @@ import live.smoothing.ruleengine.gateway.entity.Gateway;
 import live.smoothing.ruleengine.gateway.service.GatewayService;
 import live.smoothing.ruleengine.mq.consumer.GatewayConsumer;
 import live.smoothing.ruleengine.mq.consumer.GatewayConsumerFactory;
+import live.smoothing.ruleengine.sensor.entity.Sensor;
 import live.smoothing.ruleengine.sensor.entity.SensorData;
+import live.smoothing.ruleengine.sensor.service.SensorService;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,12 +17,16 @@ import static java.util.Objects.isNull;
 public class RuleEngineManagement {
 
     private final List<GatewayConsumer> gatewayConsumers = new LinkedList<>();
+
     private final GatewayService gatewayService;
+
+    private final SensorService sensorService;
 
     private final GatewayConsumerFactory gatewayConsumerFactory;
 
-    public RuleEngineManagement(GatewayService gatewayService, GatewayConsumerFactory gatewayConsumerFactory) {
+    public RuleEngineManagement(GatewayService gatewayService, SensorService sensorService, GatewayConsumerFactory gatewayConsumerFactory) {
 
+        this.sensorService = sensorService;
         this.gatewayService = gatewayService;
         this.gatewayConsumerFactory = gatewayConsumerFactory;
 
@@ -37,13 +43,13 @@ public class RuleEngineManagement {
         }
 
         // 센서 목록 가져와서 각각의 게이트웨이에 추가
-        for(GatewayConsumer gc : gatewayConsumers) {
+        for (Gateway g : gateways) {
 
-//            List<Sensor> sensors = SensorService.getSensors();
-//
-//            for(Sensor s : sensors) {
-//                subscribe(gc.getGatewayName(), s.getTopic());
-//            }
+            List<Sensor> sensors = sensorService.getSensors(g.getGatewayId());
+
+            for (Sensor s : sensors) {
+                subscribe(g.getGatewayId(), s.getTopic());
+            }
         }
 
     }
@@ -65,9 +71,11 @@ public class RuleEngineManagement {
                 break;
             }
         }
+
         if (isNull(gatewayConsumer)) {
             throw new IllegalArgumentException("GatewayConsumer not found");
         }
+
         try {
             gatewayConsumer.subscribe(topic);
         } catch (Exception e) {
@@ -83,9 +91,11 @@ public class RuleEngineManagement {
                 break;
             }
         }
+
         if (isNull(gatewayConsumer)) {
             throw new IllegalArgumentException("GatewayConsumer not found");
         }
+
         try {
             gatewayConsumer.unsubscribe(topic);
         } catch (Exception e) {
@@ -98,6 +108,7 @@ public class RuleEngineManagement {
         gatewayService.addGateway(request);
         GatewayConsumer gatewayConsumer = gatewayConsumerFactory.create(request.getGatewayIp(), request.getGatewayPort(), request.getGatewayName(), request.getGatewayType());
         gatewayConsumers.add(gatewayConsumer);
+
         try {
             gatewayConsumer.start();
         } catch (Exception e) {

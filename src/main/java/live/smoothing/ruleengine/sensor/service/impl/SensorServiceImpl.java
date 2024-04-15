@@ -20,7 +20,9 @@ public class SensorServiceImpl implements SensorService {
     @Override
     public boolean isRegistered(SensorData sensorData) {
 
-        return sensorRepository.findBySensorName(sensorData.getTopic()).isPresent();
+        return sensorRepository
+                .findBySensorName(sensorData.getTopic())
+                .isPresent();
     }
 
     @Override
@@ -29,8 +31,8 @@ public class SensorServiceImpl implements SensorService {
         return sensorRepository.findByGatewayId(gatewayId);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void saveSensor(SensorRegisterRequest request) {
 
         sensorRepository.findBySensorName(request.getSensorName())
