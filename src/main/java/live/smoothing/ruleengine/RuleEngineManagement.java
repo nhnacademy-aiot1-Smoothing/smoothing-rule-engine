@@ -5,10 +5,7 @@ import live.smoothing.ruleengine.gateway.entity.Gateway;
 import live.smoothing.ruleengine.gateway.service.GatewayService;
 import live.smoothing.ruleengine.mq.consumer.GatewayConsumer;
 import live.smoothing.ruleengine.mq.consumer.GatewayConsumerFactory;
-import live.smoothing.ruleengine.sensor.service.SensorService;
-import live.smoothing.ruleengine.sensor.service.entity.Sensor;
-import live.smoothing.ruleengine.sensor.service.entity.SensorData;
-import lombok.AllArgsConstructor;
+import live.smoothing.ruleengine.sensor.entity.SensorData;
 
 import java.util.LinkedList;
 import java.util.List;
