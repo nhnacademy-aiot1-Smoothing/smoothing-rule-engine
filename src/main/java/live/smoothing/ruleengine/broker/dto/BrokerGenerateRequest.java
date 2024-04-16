@@ -11,10 +11,7 @@ import lombok.NoArgsConstructor;
 public class BrokerGenerateRequest {
 
     private String brokerIp;
-
     private int brokerPort;
-
     private String brokerName;
-
     private String brokerType;
 }

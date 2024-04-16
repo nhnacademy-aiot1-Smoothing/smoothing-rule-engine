@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class RuleEngineConfig {
+
     private final BrokerService brokerService;
     private final SensorService sensorService;
 

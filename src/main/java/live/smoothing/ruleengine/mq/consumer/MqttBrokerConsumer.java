@@ -10,21 +10,13 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
 
     private final int connectionTimeout;
-
     private final int keepAliveInterval;
-
     private final boolean cleanSession;
-
     private final boolean automaticReconnect;
-
     private final RuleEngineManagement ruleEngineManagement;
-
     private final String brokerUri;
-
     private final String brokerName;
-
     private final int port;
-
     private final String clientId;
 
     MqttClient client;

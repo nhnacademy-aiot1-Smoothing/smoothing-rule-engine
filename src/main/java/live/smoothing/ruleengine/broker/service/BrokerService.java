@@ -8,8 +8,6 @@ import java.util.List;
 public interface BrokerService {
 
     Broker addBroker(BrokerGenerateRequest request);
-
     String getBrokerName(Integer brokerId);
-
     List<Broker> getBrokers();
 }

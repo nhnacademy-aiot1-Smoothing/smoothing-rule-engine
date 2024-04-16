@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 public class SensorRegisterRequest {
 
     private String topic;
-
     private Integer brokerId;
-
     private String sensorName;
 }

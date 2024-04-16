@@ -10,14 +10,15 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
-@Service("brokerService")
 @AllArgsConstructor
+@Service("brokerService")
 public class BrokerServiceImpl implements BrokerService {
 
     private final BrokerRepository brokerRepository;
 
     @Override
     public Broker addBroker(BrokerGenerateRequest request) {
+
         String ip = request.getBrokerIp();
         String name = request.getBrokerName();
 

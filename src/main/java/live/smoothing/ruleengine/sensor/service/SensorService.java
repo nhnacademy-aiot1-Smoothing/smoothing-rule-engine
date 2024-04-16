@@ -9,8 +9,6 @@ import java.util.List;
 public interface SensorService {
 
     boolean isRegistered(SensorData sensorData);
-
     List<Sensor> getSensors(Integer brokerId);
-
     void saveSensor(SensorRegisterRequest request);
 }
