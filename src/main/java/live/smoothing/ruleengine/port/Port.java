@@ -32,8 +32,11 @@ public class Port {
      * @throws InterruptedException 메시지 전달 실패시
      */
     public void put(SensorMessage message) throws InterruptedException {
-        wires.get(currentWireIndex % wires.size()).put(message);
-        currentWireIndex++;
+        if (currentWireIndex == wires.size()) {
+            currentWireIndex = 0;
+        }
+
+        wires.get(currentWireIndex++).put(message);
     }
 
     /**
