@@ -26,7 +26,7 @@ public class Port {
     }
 
     /**
-     * 메시지 전달
+     * 와이어에 Round Robin 방식으로 순차적 메시지 전달
      *
      * @param message 전달할 메시지
      * @throws InterruptedException 메시지 전달 실패시
