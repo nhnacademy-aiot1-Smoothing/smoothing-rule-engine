@@ -7,7 +7,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
 @RequiredArgsConstructor
-public class MqttGatewayConsumer implements GatewayConsumer, MqttCallback {
+public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
 
     private final int connectionTimeout;
 
@@ -19,9 +19,9 @@ public class MqttGatewayConsumer implements GatewayConsumer, MqttCallback {
 
     private final RuleEngineManagement ruleEngineManagement;
 
-    private final String gatewayUri;
+    private final String brokerUri;
 
-    private final String gatewayName;
+    private final String brokerName;
 
     private final int port;
 
@@ -30,15 +30,15 @@ public class MqttGatewayConsumer implements GatewayConsumer, MqttCallback {
     MqttClient client;
 
     @Override
-    public String getGatewayUri() {
+    public String getBrokerUri() {
 
-        return gatewayUri;
+        return brokerUri;
     }
 
     @Override
-    public String getGatewayName() {
+    public String getBrokerName() {
 
-        return gatewayName;
+        return brokerName;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class MqttGatewayConsumer implements GatewayConsumer, MqttCallback {
     @Override
     public void start() throws Exception {
 
-        client = new MqttClient("tcp://" + gatewayUri + ":" + port, clientId,
+        client = new MqttClient("tcp://" + brokerUri + ":" + port, clientId,
                 new MqttDefaultFilePersistence("./target/trash"));
         client.setCallback(this);
         MqttConnectOptions options = new MqttConnectOptions();

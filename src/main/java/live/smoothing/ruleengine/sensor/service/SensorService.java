@@ -10,7 +10,7 @@ public interface SensorService {
 
     boolean isRegistered(SensorData sensorData);
 
-    List<Sensor> getSensors(Integer gatewayId);
+    List<Sensor> getSensors(Integer brokerId);
 
     void saveSensor(SensorRegisterRequest request);
 }

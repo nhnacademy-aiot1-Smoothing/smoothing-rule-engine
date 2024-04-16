@@ -21,8 +21,8 @@ public class Sensor {
     @Id
     private String topic;
 
-    @Column(name = "gateway_id")
-    private Integer gatewayId;
+    @Column(name = "broker_id")
+    private Integer brokerId;
 
     @Column(name = "sensor_name")
     private String sensorName;

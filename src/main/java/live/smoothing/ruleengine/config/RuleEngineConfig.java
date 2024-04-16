@@ -1,9 +1,9 @@
 package live.smoothing.ruleengine.config;
 
 import live.smoothing.ruleengine.RuleEngineManagement;
-import live.smoothing.ruleengine.gateway.service.GatewayService;
-import live.smoothing.ruleengine.mq.consumer.GatewayConsumerFactory;
-import live.smoothing.ruleengine.mq.consumer.MqttGatewayConsumerFactory;
+import live.smoothing.ruleengine.broker.service.BrokerService;
+import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
+import live.smoothing.ruleengine.mq.consumer.MqttBrokerConsumerFactory;
 import live.smoothing.ruleengine.sensor.service.SensorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,18 +12,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class RuleEngineConfig {
-    private final GatewayService gatewayService;
+    private final BrokerService brokerService;
     private final SensorService sensorService;
 
     @Bean
-    public GatewayConsumerFactory gatewayConsumerFactory() {
+    public BrokerConsumerFactory brokerConsumerFactory() {
 
-        return new MqttGatewayConsumerFactory();
+        return new MqttBrokerConsumerFactory();
     }
 
     @Bean
     public RuleEngineManagement ruleEngineManagement() {
 
-        return new RuleEngineManagement(gatewayService,sensorService, gatewayConsumerFactory());
+        return new RuleEngineManagement(brokerService,sensorService, brokerConsumerFactory());
     }
 }

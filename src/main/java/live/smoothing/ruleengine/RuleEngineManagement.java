@@ -1,10 +1,10 @@
 package live.smoothing.ruleengine;
 
-import live.smoothing.ruleengine.gateway.dto.GatewayGenerateRequest;
-import live.smoothing.ruleengine.gateway.entity.Gateway;
-import live.smoothing.ruleengine.gateway.service.GatewayService;
-import live.smoothing.ruleengine.mq.consumer.GatewayConsumer;
-import live.smoothing.ruleengine.mq.consumer.GatewayConsumerFactory;
+import live.smoothing.ruleengine.broker.dto.BrokerGenerateRequest;
+import live.smoothing.ruleengine.broker.entity.Broker;
+import live.smoothing.ruleengine.broker.service.BrokerService;
+import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
+import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
 import live.smoothing.ruleengine.sensor.entity.Sensor;
 import live.smoothing.ruleengine.sensor.entity.SensorData;
 import live.smoothing.ruleengine.sensor.service.SensorService;
@@ -16,39 +16,39 @@ import static java.util.Objects.isNull;
 
 public class RuleEngineManagement {
 
-    private final List<GatewayConsumer> gatewayConsumers = new LinkedList<>();
+    private final List<BrokerConsumer> brokerConsumers = new LinkedList<>();
 
-    private final GatewayService gatewayService;
+    private final BrokerService brokerService;
 
     private final SensorService sensorService;
 
-    private final GatewayConsumerFactory gatewayConsumerFactory;
+    private final BrokerConsumerFactory brokerConsumerFactory;
 
-    public RuleEngineManagement(GatewayService gatewayService, SensorService sensorService, GatewayConsumerFactory gatewayConsumerFactory) {
+    public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory) {
 
         this.sensorService = sensorService;
-        this.gatewayService = gatewayService;
-        this.gatewayConsumerFactory = gatewayConsumerFactory;
+        this.brokerService = brokerService;
+        this.brokerConsumerFactory = brokerConsumerFactory;
 
         init();
     }
 
     private void init() {
 
-        List<Gateway> gateways = gatewayService.getGateways();
+        List<Broker> brokers = brokerService.getBrokers();
 
-        for (Gateway g : gateways) {
-            addGateway(new GatewayGenerateRequest(g.getGatewayIp(), g.getGatewayPort(), g.getGatewayName(), g.getGatewayType()));
+        for (Broker g : brokers) {
+            addBroker(new BrokerGenerateRequest(g.getBrokerIp(), g.getBrokerPort(), g.getBrokerName(), g.getBrokerType()));
 
         }
 
         // 센서 목록 가져와서 각각의 게이트웨이에 추가
-        for (Gateway g : gateways) {
+        for (Broker g : brokers) {
 
-            List<Sensor> sensors = sensorService.getSensors(g.getGatewayId());
+            List<Sensor> sensors = sensorService.getSensors(g.getBrokerId());
 
             for (Sensor s : sensors) {
-                subscribe(g.getGatewayId(), s.getTopic());
+                subscribe(g.getBrokerId(), s.getTopic());
             }
         }
 
@@ -59,65 +59,65 @@ public class RuleEngineManagement {
 
     }
 
-    public void subscribe(Integer gatewayId, String topic) {
+    public void subscribe(Integer brokerId, String topic) {
 
-        String gatewayName = gatewayService.getGatewayName(gatewayId);
+        String brokerName = brokerService.getBrokerName(brokerId);
 
-        GatewayConsumer gatewayConsumer = null;
+        BrokerConsumer brokerConsumer = null;
 
-        for (GatewayConsumer g : gatewayConsumers) {
-            if (gatewayConsumer.getGatewayName().equals(gatewayName)) {
-                gatewayConsumer = g;
+        for (BrokerConsumer g : brokerConsumers) {
+            if (brokerConsumer.getBrokerName().equals(brokerName)) {
+                brokerConsumer = g;
                 break;
             }
         }
 
-        if (isNull(gatewayConsumer)) {
-            throw new IllegalArgumentException("GatewayConsumer not found");
+        if (isNull(brokerConsumer)) {
+            throw new IllegalArgumentException("BrokerConsumer not found");
         }
 
         try {
-            gatewayConsumer.subscribe(topic);
+            brokerConsumer.subscribe(topic);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void unsubscribe(String gatewayName, String topic) {
-        GatewayConsumer gatewayConsumer = null;
-        for (GatewayConsumer g : gatewayConsumers) {
-            if (gatewayConsumer.getGatewayName().equals(gatewayName)) {
-                gatewayConsumer = g;
+    public void unsubscribe(String brokerName, String topic) {
+        BrokerConsumer brokerConsumer = null;
+        for (BrokerConsumer g : brokerConsumers) {
+            if (brokerConsumer.getBrokerName().equals(brokerName)) {
+                brokerConsumer = g;
                 break;
             }
         }
 
-        if (isNull(gatewayConsumer)) {
-            throw new IllegalArgumentException("GatewayConsumer not found");
+        if (isNull(brokerConsumer)) {
+            throw new IllegalArgumentException("BrokerConsumer not found");
         }
 
         try {
-            gatewayConsumer.unsubscribe(topic);
+            brokerConsumer.unsubscribe(topic);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void addGateway(GatewayGenerateRequest request) {
+    public void addBroker(BrokerGenerateRequest request) {
 
-        gatewayService.addGateway(request);
-        GatewayConsumer gatewayConsumer = gatewayConsumerFactory.create(request.getGatewayIp(), request.getGatewayPort(), request.getGatewayName(), request.getGatewayType());
-        gatewayConsumers.add(gatewayConsumer);
+        brokerService.addBroker(request);
+        BrokerConsumer brokerConsumer = brokerConsumerFactory.create(request.getBrokerIp(), request.getBrokerPort(), request.getBrokerName(), request.getBrokerType());
+        brokerConsumers.add(brokerConsumer);
 
         try {
-            gatewayConsumer.start();
+            brokerConsumer.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public void removeGateway(Integer gatewayId) {
-        // RuleEngine 에서 Gateway 를 제거하는 로직
+    public void removeBroker(Integer brokerId) {
+        // RuleEngine 에서 Broker 를 제거하는 로직
     }
 }

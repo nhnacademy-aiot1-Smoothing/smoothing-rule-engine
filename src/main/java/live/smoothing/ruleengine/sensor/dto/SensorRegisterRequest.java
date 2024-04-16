@@ -10,7 +10,7 @@ public class SensorRegisterRequest {
 
     private String topic;
 
-    private Integer gatewayId;
+    private Integer brokerId;
 
     private String sensorName;
 }

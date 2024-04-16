@@ -1,18 +1,18 @@
 package live.smoothing.ruleengine.mq.consumer;
 
-public interface GatewayConsumer {
+public interface BrokerConsumer {
 
     /**
-     * Gateway 의 Url 를 반환하는 메소드
-     * @return Gateway Url
+     * Broker 의 Url 를 반환하는 메소드
+     * @return Broker Url
      */
-    String getGatewayUri();
+    String getBrokerUri();
 
     /**
-     * Gateway 의 name 을 반환하는 메소드
-     * @return Gateway name
+     * Broker 의 name 을 반환하는 메소드
+     * @return Broker name
      */
-    String getGatewayName();
+    String getBrokerName();
 
     /**
      * message queue 의 topic 을 구독하기 위한 메소드
