@@ -3,7 +3,6 @@ package live.smoothing.ruleengine.sensor.entity;
 public class MqttSensorData implements SensorData {
 
     private String topic;
-
     private String payload;
 
     public MqttSensorData(String topic, String payload) {

@@ -26,9 +26,9 @@ public class SensorServiceImpl implements SensorService {
     }
 
     @Override
-    public List<Sensor> getSensors(Integer gatewayId) {
+    public List<Sensor> getSensors(Integer brokerId) {
 
-        return sensorRepository.findByGatewayId(gatewayId);
+        return sensorRepository.findByBrokerId(brokerId);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class SensorServiceImpl implements SensorService {
         Sensor sensor = Sensor.builder()
                 .sensorName(request.getSensorName())
                 .topic(request.getTopic())
-                .gatewayId(request.getGatewayId())
+                .brokerId(request.getBrokerId())
                 .build();
         sensorRepository.save(sensor);
     }
