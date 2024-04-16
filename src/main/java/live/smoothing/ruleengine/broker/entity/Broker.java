@@ -1,15 +1,17 @@
 package live.smoothing.ruleengine.broker.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import live.smoothing.ruleengine.protocoltype.entity.ProtocolType;
+import live.smoothing.ruleengine.sensor.entity.Sensor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "brokers")
 public class Broker {
 
@@ -27,6 +29,11 @@ public class Broker {
     @Column(name = "broker_name", nullable = false)
     private String brokerName;
 
-    @Column(name = "broker_type", nullable = false)
-    private String brokerType;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "protocol_type")
+    private ProtocolType protocolType;
+
+    @OneToMany(mappedBy = "broker", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Sensor> sensors;
+
 }

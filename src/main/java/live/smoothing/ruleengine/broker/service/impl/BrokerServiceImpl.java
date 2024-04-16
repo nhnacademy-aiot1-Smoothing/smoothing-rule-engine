@@ -22,9 +22,14 @@ public class BrokerServiceImpl implements BrokerService {
         String ip = request.getBrokerIp();
         String name = request.getBrokerName();
 
-        if(!brokerRepository.existsByBrokerIpOrBrokerName(ip, name)) {
+        if (!brokerRepository.existsByBrokerIpOrBrokerName(ip, name)) {
 
-            Broker broker = new Broker(null, request.getBrokerIp(), request.getBrokerPort(), request.getBrokerName(), request.getBrokerType());
+            Broker broker = Broker.builder()
+                    .brokerIp(request.getBrokerIp())
+                    .brokerPort(request.getBrokerPort())
+                    .brokerName(request.getBrokerName())
+                    .protocolType(request.getProtocolType())
+                    .build();
             return brokerRepository.save(broker);
 
         }

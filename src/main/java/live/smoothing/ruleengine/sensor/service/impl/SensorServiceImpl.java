@@ -1,5 +1,6 @@
 package live.smoothing.ruleengine.sensor.service.impl;
 
+import live.smoothing.ruleengine.broker.repository.BrokerRepository;
 import live.smoothing.ruleengine.sensor.dto.SensorRegisterRequest;
 import live.smoothing.ruleengine.sensor.service.SensorService;
 import live.smoothing.ruleengine.sensor.entity.Sensor;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,24 +18,25 @@ import java.util.List;
 public class SensorServiceImpl implements SensorService {
 
     private final SensorRepository sensorRepository;
+    private final BrokerRepository brokerRepository;
 
     @Override
-    public boolean isRegistered(SensorData sensorData) {
+    public boolean isRegistered(String sensorName) {
 
         return sensorRepository
-                .findBySensorName(sensorData.getTopic())
+                .findBySensorName(sensorName)
                 .isPresent();
     }
 
     @Override
     public List<Sensor> getSensors(Integer brokerId) {
 
-        return sensorRepository.findByBrokerId(brokerId);
+        return sensorRepository.findByBrokerBrokerId(brokerId);
     }
 
     @Override
     @Transactional
-    public void saveSensor(SensorRegisterRequest request) {
+    public Sensor saveSensor(SensorRegisterRequest request) {
 
         sensorRepository.findBySensorName(request.getSensorName())
                 .ifPresent(sensor -> {
@@ -42,9 +45,10 @@ public class SensorServiceImpl implements SensorService {
 
         Sensor sensor = Sensor.builder()
                 .sensorName(request.getSensorName())
-                .topic(request.getTopic())
-                .brokerId(request.getBrokerId())
+                .broker(brokerRepository.getReferenceById(request.getBrokerId()))
+                .sensorRegisteredAt(LocalDateTime.now())
+                .sensorType(request.getSensorType())
                 .build();
-        sensorRepository.save(sensor);
+        return sensorRepository.save(sensor);
     }
 }
