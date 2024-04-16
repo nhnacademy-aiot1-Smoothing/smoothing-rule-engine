@@ -29,14 +29,14 @@ public class BrokerServiceImpl implements BrokerService {
 
         }
 
-        throw new IllegalArgumentException("게이트웨이가 이미 존재합니다.");
+        throw new IllegalArgumentException("브로커가 이미 존재합니다.");
     }
 
     @Override
     public String getBrokerName(Integer brokerId) {
 
         return brokerRepository.findById(brokerId)
-                .orElseThrow(() -> new EntityNotFoundException("게이트웨이 없음"))
+                .orElseThrow(() -> new EntityNotFoundException("브로커 없음"))
                 .getBrokerName();
     }
 

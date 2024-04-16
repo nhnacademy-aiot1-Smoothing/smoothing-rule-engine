@@ -17,11 +17,8 @@ import static java.util.Objects.isNull;
 public class RuleEngineManagement {
 
     private final List<BrokerConsumer> brokerConsumers = new LinkedList<>();
-
     private final BrokerService brokerService;
-
     private final SensorService sensorService;
-
     private final BrokerConsumerFactory brokerConsumerFactory;
 
     public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory) {
@@ -42,7 +39,7 @@ public class RuleEngineManagement {
 
         }
 
-        // 센서 목록 가져와서 각각의 게이트웨이에 추가
+        // 센서 목록 가져와서 각각의 브로커에 추가
         for (Broker g : brokers) {
 
             List<Sensor> sensors = sensorService.getSensors(g.getBrokerId());
