@@ -1,5 +1,6 @@
 package live.smoothing.ruleengine.broker.dto;
 
+import live.smoothing.ruleengine.protocoltype.entity.ProtocolType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,5 +14,5 @@ public class BrokerGenerateRequest {
     private String brokerIp;
     private int brokerPort;
     private String brokerName;
-    private String brokerType;
+    private ProtocolType protocolType;
 }

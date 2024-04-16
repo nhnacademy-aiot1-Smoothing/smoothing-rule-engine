@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface SensorRepository extends JpaRepository<Sensor, String> {
 
-    List<Sensor> findByBrokerId(Integer brokerId);
+    List<Sensor> findByBrokerBrokerId(Integer brokerId);
     Optional<Sensor> findBySensorName(String sensorName);
 }

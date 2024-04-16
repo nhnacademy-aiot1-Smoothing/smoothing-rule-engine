@@ -6,9 +6,12 @@ import live.smoothing.ruleengine.sensor.entity.SensorData;
 
 import java.util.List;
 
+
 public interface SensorService {
 
-    boolean isRegistered(SensorData sensorData);
+    boolean isRegistered(String sensorName);
+
     List<Sensor> getSensors(Integer brokerId);
-    void saveSensor(SensorRegisterRequest request);
+
+    Sensor saveSensor(SensorRegisterRequest request);
 }
