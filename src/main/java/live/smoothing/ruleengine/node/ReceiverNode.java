@@ -1,6 +1,7 @@
 package live.smoothing.ruleengine.node;
 
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Receiver Node
@@ -8,6 +9,7 @@ import live.smoothing.ruleengine.sensor.dto.SensorMessage;
  *
  * @author 우혜승
  */
+@Slf4j
 public class ReceiverNode extends Node {
 
     protected ReceiverNode(String nodeId, int outputPortCount) {
@@ -25,7 +27,7 @@ public class ReceiverNode extends Node {
                 SensorMessage message = tryGetMessage();
                 process(message);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                log.debug("ReceiverNode에서 메시지를 가져오는데 실패했습니다.");
             }
         }
 
