@@ -10,7 +10,7 @@ import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 import live.smoothing.ruleengine.sensor.entity.Sensor;
 import live.smoothing.ruleengine.sensor.entity.SensorData;
 import live.smoothing.ruleengine.sensor.service.SensorService;
-import live.smoothing.ruleengine.topic.entity.Topic;
+import live.smoothing.ruleengine.sensor.entity.Topic;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;

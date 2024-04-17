@@ -1,4 +1,4 @@
-package live.smoothing.ruleengine.topic.entity;
+package live.smoothing.ruleengine.sensor.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

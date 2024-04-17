@@ -1,6 +1,5 @@
-package live.smoothing.ruleengine.topic.entity;
+package live.smoothing.ruleengine.sensor.entity;
 
-import live.smoothing.ruleengine.sensor.entity.Sensor;
 import lombok.*;
 
 import javax.persistence.*;
