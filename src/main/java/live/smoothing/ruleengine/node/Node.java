@@ -23,7 +23,7 @@ public abstract class Node implements Runnable{
     protected Node(String nodeId ,int outputPortCount) {
         this.nodeId = nodeId;
         this.thread = new Thread(this);
-        this.inputPort = new Port(1);
+        this.inputPort = new Port();
         this.outputPorts = new Port[outputPortCount];
 
         for (int i = 0; i < outputPortCount; i++) {
