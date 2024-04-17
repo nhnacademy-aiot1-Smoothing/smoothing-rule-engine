@@ -3,6 +3,9 @@ package live.smoothing.ruleengine.node;
 import live.smoothing.ruleengine.port.Wire;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 import live.smoothing.ruleengine.port.Port;
+import lombok.Getter;
+
+import java.util.UUID;
 
 /**
  * Flow Based 기반 공통 추상화 노드
@@ -10,11 +13,15 @@ import live.smoothing.ruleengine.port.Port;
  * @author 박영준
  */
 public abstract class Node implements Runnable{
+
+    @Getter
+    private final String nodeId;
     protected final Thread thread;
     private final Port inputPort;
     private final Port[] outputPorts;
 
-    protected Node(int outputPortCount) {
+    protected Node(String nodeId ,int outputPortCount) {
+        this.nodeId = nodeId;
         this.thread = new Thread(this);
         this.inputPort = new Port(1);
         this.outputPorts = new Port[outputPortCount];
@@ -22,6 +29,10 @@ public abstract class Node implements Runnable{
         for (int i = 0; i < outputPortCount; i++) {
             outputPorts[i] = new Port();
         }
+    }
+
+    protected Node(int outputPortCount) {
+        this(String.valueOf(UUID.randomUUID()), outputPortCount);
     }
 
     /**
@@ -71,4 +82,5 @@ public abstract class Node implements Runnable{
     protected SensorMessage tryGetMessage() throws InterruptedException {
         return inputPort.get();
     }
+
 }
