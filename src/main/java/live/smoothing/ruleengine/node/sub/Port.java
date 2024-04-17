@@ -15,14 +15,7 @@ public class Port {
     List<Wire> wires;
 
     public Port() {
-        this(0);
-    }
-
-    public Port(int wireCount) {
-        this.wires = new ArrayList<>(wireCount);
-        for (int i = 0; i < wireCount; i++) {
-            wires.add(new Wire());
-        }
+        this.wires = new ArrayList<>();
     }
 
     /**
