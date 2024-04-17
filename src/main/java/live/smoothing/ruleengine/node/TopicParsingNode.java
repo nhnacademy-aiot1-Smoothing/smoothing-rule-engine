@@ -32,8 +32,8 @@ public class TopicParsingNode extends Node {
 
                 SensorMessage goal = tryGetMessage();
 
-                String topic = goal.getAttribute("topic");
-                String payload = goal.getAttribute("payload");
+                String topic = goal.getAttribute("topic").toString();
+                String payload = goal.getAttribute("payload").toString();
 
                 for(String key : map.keySet()) {
 
@@ -41,7 +41,6 @@ public class TopicParsingNode extends Node {
                     String topicValue = letParseString(key, topic);
                     goal.addAttribute(topicValue, finalKey);
                 }
-
 
                 goal.addAttribute("time", letParse("time", payload));
                 goal.addAttribute("value", letParse("value", payload));
@@ -57,13 +56,13 @@ public class TopicParsingNode extends Node {
         }
     }
 
-    private static String letParse(String key, String target) {
+    private Object letParse(String key, String target) {
 
         JsonParser jsonParser = JsonParserFactory.getJsonParser();
-        return jsonParser.parseMap(target).get(key).toString();
+        return jsonParser.parseMap(target).get(key);
     }
 
-    private static String letParseString(String key, String target) {
+    private String letParseString(String key, String target) {
 
         String step = target.split(key+"/")[1];
         if(step.contains("/")) {

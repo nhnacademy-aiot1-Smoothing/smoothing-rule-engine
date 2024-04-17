@@ -9,7 +9,7 @@ import java.util.Map;
  * @author 박영준
  */
 public class SensorMessage {
-    private final Map<String, String> sensorAttributes;
+    private final Map<String, Object> sensorAttributes;
 
     public SensorMessage() {
         this.sensorAttributes = new HashMap<>();
@@ -21,7 +21,7 @@ public class SensorMessage {
      * @param key 속성 키
      * @return 속성 값
      */
-    public String getAttribute(String key) {
+    public Object getAttribute(String key) {
         return sensorAttributes.get(key);
     }
 
@@ -31,7 +31,7 @@ public class SensorMessage {
      * @param key 속성 키
      * @param attribute 속성 값
      */
-    public void addAttribute(String key, String attribute) {
+    public void addAttribute(String key, Object attribute) {
         sensorAttributes.put(key, attribute);
     }
 }
