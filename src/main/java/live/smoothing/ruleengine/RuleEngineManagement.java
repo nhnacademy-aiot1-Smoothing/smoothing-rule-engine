@@ -5,10 +5,13 @@ import live.smoothing.ruleengine.broker.entity.Broker;
 import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
+import live.smoothing.ruleengine.node.NodeManager;
+import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 import live.smoothing.ruleengine.sensor.entity.Sensor;
 import live.smoothing.ruleengine.sensor.entity.SensorData;
 import live.smoothing.ruleengine.sensor.service.SensorService;
 import live.smoothing.ruleengine.topic.entity.Topic;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,18 +23,21 @@ import static java.util.Objects.isNull;
  *
  * @author 우혜승
  */
+@Slf4j
 public class RuleEngineManagement {
 
     private final List<BrokerConsumer> brokerConsumers = new LinkedList<>();
     private final BrokerService brokerService;
     private final SensorService sensorService;
     private final BrokerConsumerFactory brokerConsumerFactory;
+    private final NodeManager nodeManager;
 
-    public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory) {
+    public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory, NodeManager nodeManager) {
 
         this.sensorService = sensorService;
         this.brokerService = brokerService;
         this.brokerConsumerFactory = brokerConsumerFactory;
+        this.nodeManager = nodeManager;
 
         init();
     }
@@ -69,7 +75,11 @@ public class RuleEngineManagement {
      */
     public void consume(SensorData sensorData) {
         // RuleEngine 에서 데이터를 처리하는 로직
+        SensorMessage sensorMessage = new SensorMessage();
+        sensorMessage.addAttribute("topic", sensorData.getTopic());
+        sensorMessage.addAttribute("payload", sensorData.getPayload());
 
+        nodeManager.putToReceiver(sensorMessage);
     }
 
     /**
