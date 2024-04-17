@@ -15,6 +15,11 @@ public class EqualChecker implements Checker {
 
     @Override
     public boolean check(SensorMessage message) {
-        return message.getAttribute(key).equals(value);
+        String targetValue = message.getAttribute(key);
+        if (Objects.isNull(targetValue)) {
+            return false;
+        }
+        
+        return value.equals(targetValue);
     }
 }
