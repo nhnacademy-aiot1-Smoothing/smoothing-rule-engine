@@ -15,7 +15,7 @@ public class EqualChecker implements Checker {
 
     @Override
     public boolean check(SensorMessage message) {
-        String targetValue = message.getAttribute(key);
+        Object targetValue = message.getAttribute(key);
         if (Objects.isNull(targetValue)) {
             return false;
         }
