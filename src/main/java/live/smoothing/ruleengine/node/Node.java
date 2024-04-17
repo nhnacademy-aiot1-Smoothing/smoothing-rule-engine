@@ -26,11 +26,11 @@ public abstract class Node implements Runnable{
         this.outputPortCount = outputPortCount;
         this.nodeId = nodeId;
         this.thread = new Thread(this);
-        this.inputPort = new Port();
+        this.inputPort = new Port(1);
         this.outputPorts = new Port[outputPortCount];
 
         for (int i = 0; i < outputPortCount; i++) {
-            outputPorts[i] = new Port();
+            outputPorts[i] = new Port(0);
         }
     }
 

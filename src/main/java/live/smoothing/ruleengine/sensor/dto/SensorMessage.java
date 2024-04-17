@@ -2,6 +2,7 @@ package live.smoothing.ruleengine.sensor.dto;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 노드간 전달되는 센서 메시지
@@ -33,5 +34,14 @@ public class SensorMessage {
      */
     public void addAttribute(String key, Object attribute) {
         sensorAttributes.put(key, attribute);
+    }
+
+    /**
+     * 센서 메시지 맵 모든 키 반환
+     *
+     * @return 센서 메시지 맵 키
+     */
+    public Set<String> getKeys() {
+        return sensorAttributes.keySet();
     }
 }
