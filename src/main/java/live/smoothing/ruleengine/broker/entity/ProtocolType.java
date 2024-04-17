@@ -1,4 +1,4 @@
-package live.smoothing.ruleengine.protocoltype.entity;
+package live.smoothing.ruleengine.broker.entity;
 
 import lombok.*;
 

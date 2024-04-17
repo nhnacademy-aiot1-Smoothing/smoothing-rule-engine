@@ -1,6 +1,6 @@
 package live.smoothing.ruleengine.broker.dto;
 
-import live.smoothing.ruleengine.protocoltype.entity.ProtocolType;
+import live.smoothing.ruleengine.broker.entity.ProtocolType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

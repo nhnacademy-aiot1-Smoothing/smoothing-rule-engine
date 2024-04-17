@@ -1,8 +1,8 @@
 package live.smoothing.ruleengine.node;
 
-import live.smoothing.ruleengine.port.Wire;
+import live.smoothing.ruleengine.node.sub.Wire;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
-import live.smoothing.ruleengine.port.Port;
+import live.smoothing.ruleengine.node.sub.Port;
 import lombok.Getter;
 
 import java.util.UUID;

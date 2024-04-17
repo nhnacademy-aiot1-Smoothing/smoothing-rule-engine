@@ -1,4 +1,4 @@
-package live.smoothing.ruleengine.port;
+package live.smoothing.ruleengine.node.sub;
 
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 

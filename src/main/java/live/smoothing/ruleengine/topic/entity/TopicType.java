@@ -1,4 +1,4 @@
-package live.smoothing.ruleengine.sensortype.entity;
+package live.smoothing.ruleengine.topic.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,13 +12,12 @@ import javax.persistence.Table;
 
 @Getter
 @Entity
-@Table(name = "sensor_types")
+@Table(name = "topic_types")
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SensorType {
+public class TopicType {
 
     @Id
-    @Column(name = "sensor_type")
-    private String sensorType;
-
+    @Column(name = "topic_type")
+    private String topicType;
 }

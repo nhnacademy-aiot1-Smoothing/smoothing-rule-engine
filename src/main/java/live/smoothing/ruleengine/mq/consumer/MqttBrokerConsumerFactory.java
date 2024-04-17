@@ -1,6 +1,6 @@
 package live.smoothing.ruleengine.mq.consumer;
 
-import live.smoothing.ruleengine.protocoltype.entity.ProtocolType;
+import live.smoothing.ruleengine.broker.entity.ProtocolType;
 
 public class MqttBrokerConsumerFactory implements BrokerConsumerFactory {
 

@@ -1,6 +1,6 @@
 package live.smoothing.ruleengine.sensor.dto;
 
-import live.smoothing.ruleengine.sensortype.entity.SensorType;
+import live.smoothing.ruleengine.sensor.entity.SensorType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

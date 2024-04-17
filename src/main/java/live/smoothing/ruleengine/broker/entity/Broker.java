@@ -1,6 +1,5 @@
 package live.smoothing.ruleengine.broker.entity;
 
-import live.smoothing.ruleengine.protocoltype.entity.ProtocolType;
 import live.smoothing.ruleengine.sensor.entity.Sensor;
 import lombok.*;
 
