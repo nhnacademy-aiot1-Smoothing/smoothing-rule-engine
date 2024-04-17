@@ -15,12 +15,15 @@ import java.util.UUID;
 public abstract class Node implements Runnable{
 
     @Getter
+    private final int outputPortCount;
+    @Getter
     private final String nodeId;
     protected final Thread thread;
     private final Port inputPort;
     private final Port[] outputPorts;
 
     protected Node(String nodeId ,int outputPortCount) {
+        this.outputPortCount = outputPortCount;
         this.nodeId = nodeId;
         this.thread = new Thread(this);
         this.inputPort = new Port();
@@ -29,10 +32,6 @@ public abstract class Node implements Runnable{
         for (int i = 0; i < outputPortCount; i++) {
             outputPorts[i] = new Port();
         }
-    }
-
-    protected Node(int outputPortCount) {
-        this(String.valueOf(UUID.randomUUID()), outputPortCount);
     }
 
     /**
