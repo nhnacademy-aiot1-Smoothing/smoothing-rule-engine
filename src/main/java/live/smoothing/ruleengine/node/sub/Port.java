@@ -1,6 +1,7 @@
 package live.smoothing.ruleengine.node.sub;
 
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  *
  * @author 박영준
  */
+@Slf4j
 public class Port {
     int currentWireIndex = 0;
     List<Wire> wires;
@@ -31,7 +33,7 @@ public class Port {
         if (currentWireIndex == wires.size()) {
             currentWireIndex = 0;
         }
-
+//        if(!wires.isEmpty())
         wires.get(currentWireIndex++).put(message);
     }
 
@@ -42,7 +44,7 @@ public class Port {
      * @throws InterruptedException 메시지 수신 실패시
      */
     public SensorMessage get() throws InterruptedException {
-        return wires.get(0).get();
+        return wires.get(0).get().copyOf();
     }
 
     /**
@@ -63,4 +65,5 @@ public class Port {
     public Wire getWire(int index) {
         return wires.get(index);
     }
+
 }

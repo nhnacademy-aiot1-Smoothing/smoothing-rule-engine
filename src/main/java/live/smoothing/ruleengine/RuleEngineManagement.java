@@ -5,8 +5,10 @@ import live.smoothing.ruleengine.broker.entity.Broker;
 import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
+import live.smoothing.ruleengine.mq.consumer.MqttBrokerConsumer;
 import live.smoothing.ruleengine.node.NodeManager;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
+import live.smoothing.ruleengine.sensor.entity.MqttSensorData;
 import live.smoothing.ruleengine.sensor.entity.Sensor;
 import live.smoothing.ruleengine.sensor.entity.SensorData;
 import live.smoothing.ruleengine.sensor.service.SensorService;
@@ -15,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.Objects.isNull;
 
@@ -32,6 +36,7 @@ public class RuleEngineManagement {
     private final BrokerConsumerFactory brokerConsumerFactory;
     private final NodeManager nodeManager;
 
+
     public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory, NodeManager nodeManager) {
 
         this.sensorService = sensorService;
@@ -40,6 +45,7 @@ public class RuleEngineManagement {
         this.nodeManager = nodeManager;
 
         init();
+        consume(new MqttSensorData("topic","payload"));
     }
 
     /**
@@ -75,7 +81,6 @@ public class RuleEngineManagement {
      */
     public void consume(SensorData sensorData) {
         // RuleEngine 에서 데이터를 처리하는 로직
-
         nodeManager.putToReceiver(sensorData);
     }
 

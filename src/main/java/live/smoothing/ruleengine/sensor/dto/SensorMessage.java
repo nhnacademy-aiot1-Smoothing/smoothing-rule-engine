@@ -1,5 +1,6 @@
 package live.smoothing.ruleengine.sensor.dto;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,14 @@ public class SensorMessage {
 
     public SensorMessage() {
         this.sensorAttributes = new HashMap<>();
+    }
+
+    private SensorMessage(Map<String, Object> sensorAttributes){
+        this.sensorAttributes = sensorAttributes;
+    }
+
+    public SensorMessage copyOf(){
+        return new SensorMessage(new HashMap<>(sensorAttributes));
     }
 
     /**
@@ -36,6 +45,10 @@ public class SensorMessage {
         sensorAttributes.put(key, attribute);
     }
 
+    public void deleteAttribute(String key) {
+        sensorAttributes.remove(key);
+    }
+
     /**
      * 센서 메시지 맵 모든 키 반환
      *
@@ -43,5 +56,10 @@ public class SensorMessage {
      */
     public Set<String> getKeys() {
         return sensorAttributes.keySet();
+    }
+
+    @Override
+    public String toString(){
+        return sensorAttributes.toString();
     }
 }

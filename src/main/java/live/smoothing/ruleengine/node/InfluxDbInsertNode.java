@@ -1,16 +1,19 @@
 package live.smoothing.ruleengine.node;
 
+import com.google.gson.JsonPrimitive;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+@Slf4j
 public class InfluxDbInsertNode extends Node {
 
     private static final String VALUE_KEY = "value";
@@ -37,6 +40,8 @@ public class InfluxDbInsertNode extends Node {
             try {
                 SensorMessage sensorMessage = tryGetMessage();
 
+                log.error("{}", getInputWire().size());
+
                 WriteApiBlocking writeApi = influxDBClient.getWriteApiBlocking();
 
                 StringBuilder builder = new StringBuilder();
@@ -50,10 +55,14 @@ public class InfluxDbInsertNode extends Node {
                 }
 
                 builder.append(" ").append(VALUE_KEY);
-                if (sensorMessage.getAttribute(VALUE_KEY) instanceof String) {
-                    builder.append("=\"").append(sensorMessage.getAttribute(VALUE_KEY)).append("\"");
+                if(sensorMessage.getAttribute(VALUE_KEY) instanceof JsonPrimitive){
+                    if (((JsonPrimitive)sensorMessage.getAttribute(VALUE_KEY)).isString()) {
+                        builder.append("=\"").append(sensorMessage.getAttribute(VALUE_KEY)).append("\"");
+                    } else {
+                        builder.append("=").append(sensorMessage.getAttribute(VALUE_KEY));
+                    }
                 } else {
-                    builder.append("=").append(sensorMessage.getAttribute(VALUE_KEY));
+                    builder.append("=").append(0);
                 }
 
                 Instant instant = Instant.ofEpochMilli(Long.parseLong(sensorMessage.getAttribute(TIME_KEY).toString()));
@@ -64,6 +73,8 @@ public class InfluxDbInsertNode extends Node {
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+            }catch (NullPointerException e){
+                log.error(e.getMessage());
             }
         }
     }
