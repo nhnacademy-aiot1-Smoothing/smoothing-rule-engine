@@ -1,6 +1,5 @@
-package live.smoothing.ruleengine.node;
+package live.smoothing.ruleengine.checker;
 
-import live.smoothing.ruleengine.checker.Checker;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 
 /**
@@ -10,6 +9,12 @@ import live.smoothing.ruleengine.sensor.dto.SensorMessage;
  */
 public class AllChecker implements Checker {
 
+
+    /**
+     * 항상 true를 반환
+     * @param message
+     * @return
+     */
     @Override
     public boolean check(SensorMessage message) {
 
