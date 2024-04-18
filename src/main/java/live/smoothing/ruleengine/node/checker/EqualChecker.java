@@ -1,4 +1,4 @@
-package live.smoothing.ruleengine.checker;
+package live.smoothing.ruleengine.node.checker;
 
 import live.smoothing.ruleengine.common.Parameters;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
