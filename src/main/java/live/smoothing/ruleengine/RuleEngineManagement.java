@@ -75,11 +75,8 @@ public class RuleEngineManagement {
      */
     public void consume(SensorData sensorData) {
         // RuleEngine 에서 데이터를 처리하는 로직
-        SensorMessage sensorMessage = new SensorMessage();
-        sensorMessage.addAttribute("topic", sensorData.getTopic());
-        sensorMessage.addAttribute("payload", sensorData.getPayload());
 
-        nodeManager.putToReceiver(sensorMessage);
+        nodeManager.putToReceiver(sensorData);
     }
 
     /**
