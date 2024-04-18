@@ -21,7 +21,6 @@ public class NodeManager {
     public NodeManager() {
         receiverNode = new ReceiverNode("receiver", 0);
         //생성 후 변경
-        receiverNode.start();
     }
 
     public void putToReceiver(SensorData sensorData) {

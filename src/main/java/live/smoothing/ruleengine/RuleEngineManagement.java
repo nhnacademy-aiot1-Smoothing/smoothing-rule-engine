@@ -130,7 +130,6 @@ public class RuleEngineManagement {
      */
     public void addBroker(BrokerGenerateRequest request) {
 
-        brokerService.addBroker(request);
         BrokerConsumer brokerConsumer = brokerConsumerFactory.create(request.getBrokerIp(), request.getBrokerPort(), request.getBrokerId(), request.getProtocolType());
         brokerConsumers.put(request.getBrokerId(), brokerConsumer);
         topics.put(request.getBrokerId(), new LinkedList<>());
