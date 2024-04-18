@@ -5,6 +5,7 @@ import live.smoothing.ruleengine.broker.entity.Broker;
 import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
+import live.smoothing.ruleengine.mq.consumer.MqttBrokerConsumer;
 import live.smoothing.ruleengine.node.NodeManager;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 import live.smoothing.ruleengine.sensor.entity.Sensor;
@@ -40,6 +41,23 @@ public class RuleEngineManagement {
         this.nodeManager = nodeManager;
 
         init();
+        MqttBrokerConsumer mqttBrokerConsumer = new MqttBrokerConsumer(
+                30,
+                30,
+                true,
+                true,
+                this,
+                "133.186.153.19",
+                "test",
+                1883,
+                "test"
+        );
+        try {
+            mqttBrokerConsumer.start();
+            mqttBrokerConsumer.subscribe("#");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

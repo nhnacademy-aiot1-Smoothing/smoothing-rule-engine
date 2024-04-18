@@ -36,6 +36,10 @@ public class SensorMessage {
         sensorAttributes.put(key, attribute);
     }
 
+    public void deleteAttribute(String key) {
+        sensorAttributes.remove(key);
+    }
+
     /**
      * 센서 메시지 맵 모든 키 반환
      *
@@ -43,5 +47,10 @@ public class SensorMessage {
      */
     public Set<String> getKeys() {
         return sensorAttributes.keySet();
+    }
+
+    @Override
+    public String toString(){
+        return sensorAttributes.toString();
     }
 }

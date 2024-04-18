@@ -39,18 +39,18 @@ public class TopicParsingNode extends Node {
 
                     String finalKey = map.get(key);
                     String topicValue = letParseString(key, topic);
-                    goal.addAttribute(topicValue, finalKey);
+                    goal.addAttribute(finalKey, topicValue);
                 }
 
                 goal.addAttribute("time", letParse("time", payload));
                 goal.addAttribute("value", letParse("value", payload));
-
+                //todo
+                goal.deleteAttribute("payload");
                 for(int i = 0; i < getOutputPortCount(); i++) {
-
                     output(i, goal);
                 }
 
-            } catch(InterruptedException e) {
+            } catch(RuntimeException e) {
                 log.info("토픽파싱노드 Interrupted");
             }
         }
@@ -58,16 +58,23 @@ public class TopicParsingNode extends Node {
 
     private Object letParse(String key, String target) {
 
-        JsonParser jsonParser = JsonParserFactory.getJsonParser();
-        return jsonParser.parseMap(target).get(key);
+        com.google.gson.JsonParser jsonParser = new com.google.gson.JsonParser();
+        return jsonParser.parse(target).getAsJsonObject().get(key);
     }
 
     private String letParseString(String key, String target) {
 
-        String step = target.split(key+"/")[1];
+        String step = target.split("/"+key+"/")[1];
         if(step.contains("/")) {
             return step.split("/")[0];
         }
         return step;
+    }
+
+    public static void main(String[] args) {
+        TopicParsingNode topicParsingNode = new TopicParsingNode("topicParsing", 0,
+                Map.of("p","place","s","site","e","event")
+        );
+        System.out.println(topicParsingNode.letParseString("e","data/s/nhnacademy/b/gyeongnam/p/office/d/gems-3500/e/electrical_energy/t/ac_indoor_unit/ph/1/de/volt_unbalance"));
     }
 }
