@@ -16,6 +16,14 @@ public class SensorMessage {
         this.sensorAttributes = new HashMap<>();
     }
 
+    private SensorMessage(Map<String, Object> sensorAttributes){
+        this.sensorAttributes = sensorAttributes;
+    }
+
+    public SensorMessage copyOf(){
+        return new SensorMessage(Map.copyOf(sensorAttributes));
+    }
+
     /**
      * 센서 메시지 맵에 있는 속성 반환
      *

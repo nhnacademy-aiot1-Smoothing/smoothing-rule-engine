@@ -51,6 +51,7 @@ public class TopicParsingNode extends Node {
                 }
 
             } catch(RuntimeException e) {
+                log.error("{}",e.getCause());
                 log.info("토픽파싱노드 Interrupted");
             }
         }

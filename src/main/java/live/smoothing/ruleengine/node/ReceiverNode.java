@@ -25,7 +25,6 @@ public class ReceiverNode extends Node {
         while(!Thread.currentThread().isInterrupted()) {
             try {
                 SensorMessage message = tryGetMessage();
-                log.error("{} : {}",this.getNodeId(),message.toString());
                 process(message);
             } catch (InterruptedException e) {
                 log.debug("ReceiverNode에서 메시지를 가져오는데 실패했습니다.");

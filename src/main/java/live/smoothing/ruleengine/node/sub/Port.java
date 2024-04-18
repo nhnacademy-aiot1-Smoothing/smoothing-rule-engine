@@ -1,6 +1,7 @@
 package live.smoothing.ruleengine.node.sub;
 
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  *
  * @author 박영준
  */
+@Slf4j
 public class Port {
     int currentWireIndex = 0;
     List<Wire> wires;

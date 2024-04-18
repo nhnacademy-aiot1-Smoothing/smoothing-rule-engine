@@ -36,4 +36,8 @@ public class Wire {
     public SensorMessage get() throws InterruptedException {
         return queue.take();
     }
+
+    public int size(){
+        return queue.size();
+    }
 }

@@ -32,18 +32,21 @@ public class NodeManager {
         );
         receiverNode.connect(0, topicParsingNode.getInputWire());
         topicParsingNode.start();
-        Checker[] checkers = new Checker[2];
-        checkers[0] = new EqualChecker(new Parameters(Map.of("key","event","value","humidity")));
-        checkers[1] = new AllChecker(new Parameters(Map.of("place","building","site","seoul")));
-        Node switchNode = new SwitchNode("switch", 2, checkers);
-        topicParsingNode.connect(0, switchNode.getInputWire());
-        switchNode.start();
-        Node t1 = new ReceiverNode("t1", 0);
-        Node t2 = new ReceiverNode("t2", 0);
-        switchNode.connect(0, t1.getInputWire());
-        switchNode.connect(1, t2.getInputWire());
-        t1.start();
-        t2.start();
+
+        Checker[] checkers = new Checker[1];
+        checkers[0] = new AllChecker(new Parameters(Map.of()));
+        Node s = new SwitchNode("switch", 1, checkers);
+
+        topicParsingNode.connect(0, s.getInputWire());
+        s.start();
+
+        Node i = new InfluxDbInsertNode("influxDbInsert", 0,
+        "http://133.186.144.22:8086",
+        "lNHA8r2lkHwPtfHfDXLCC47iF_ZhLPbsw2PvP9a_ofKe46wXa1B8aUBenjoL1ryGbdr5KHzmSvg9258VxBlKdg==",
+        "smoothing",
+        "test");
+        s.connect(0, i.getInputWire());
+        i.start();
     }
 
     public void putToReceiver(SensorData sensorData) {

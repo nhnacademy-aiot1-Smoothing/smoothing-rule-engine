@@ -6,11 +6,13 @@ import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+@Slf4j
 public class InfluxDbInsertNode extends Node {
 
     private static final String VALUE_KEY = "value";
@@ -36,6 +38,8 @@ public class InfluxDbInsertNode extends Node {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 SensorMessage sensorMessage = tryGetMessage();
+
+                log.error("{}", getInputWire().size());
 
                 WriteApiBlocking writeApi = influxDBClient.getWriteApiBlocking();
 
