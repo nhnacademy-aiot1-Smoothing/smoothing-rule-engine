@@ -1,23 +1,23 @@
 package live.smoothing.ruleengine.node;
 
+import com.google.gson.JsonParser;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.boot.json.JsonParserFactory;
 
 import java.util.Map;
+import java.util.Set;
 
 public class TopicParsingNode extends Node {
 
     private static final Logger log = LoggerFactory.getLogger(TopicParsingNode.class);
-    private final Map<String, String> map;
+    private final Set<Map.Entry<String, String>> sets;
 
     protected TopicParsingNode(String nodeId, int outputPortCount, Map<String, String> map) {
 
         super(nodeId, outputPortCount);
-        this.map = map;
+        sets = map.entrySet();
     }
 
     /**
@@ -35,23 +35,21 @@ public class TopicParsingNode extends Node {
                 String topic = goal.getAttribute("topic").toString();
                 String payload = goal.getAttribute("payload").toString();
 
-                for(String key : map.keySet()) {
-
-                    String finalKey = map.get(key);
-                    String topicValue = letParseString(key, topic);
-                    goal.addAttribute(finalKey, topicValue);
+                for (Map.Entry<String, String> set : sets) {
+                    String finalKey = set.getKey();
+                    String finalValue = letParseString(finalKey, topic);
+                    goal.addAttribute(finalKey, finalValue);
                 }
 
                 goal.addAttribute("time", letParse("time", payload));
                 goal.addAttribute("value", letParse("value", payload));
-                //todo
                 goal.deleteAttribute("payload");
+
                 for(int i = 0; i < getOutputPortCount(); i++) {
                     output(i, goal);
                 }
 
             } catch(RuntimeException e) {
-                log.error("{}",e.getCause());
                 log.info("토픽파싱노드 Interrupted");
             }
         }
@@ -59,7 +57,7 @@ public class TopicParsingNode extends Node {
 
     private Object letParse(String key, String target) {
 
-        com.google.gson.JsonParser jsonParser = new com.google.gson.JsonParser();
+        JsonParser jsonParser = new com.google.gson.JsonParser();
         return jsonParser.parse(target).getAsJsonObject().get(key);
     }
 

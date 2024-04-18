@@ -33,7 +33,7 @@ public class Port {
         if (currentWireIndex == wires.size()) {
             currentWireIndex = 0;
         }
-
+//        if(!wires.isEmpty())
         wires.get(currentWireIndex++).put(message);
     }
 
@@ -44,7 +44,7 @@ public class Port {
      * @throws InterruptedException 메시지 수신 실패시
      */
     public SensorMessage get() throws InterruptedException {
-        return wires.get(0).get();
+        return wires.get(0).get().copyOf();
     }
 
     /**
@@ -65,4 +65,5 @@ public class Port {
     public Wire getWire(int index) {
         return wires.get(index);
     }
+
 }
