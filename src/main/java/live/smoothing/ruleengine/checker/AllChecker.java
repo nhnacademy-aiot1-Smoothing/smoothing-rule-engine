@@ -9,7 +9,7 @@ import live.smoothing.ruleengine.sensor.dto.SensorMessage;
  */
 public class AllChecker implements Checker {
 
-
+    public AllChecker() {}
     /**
      * 항상 true를 반환
      * @param message
