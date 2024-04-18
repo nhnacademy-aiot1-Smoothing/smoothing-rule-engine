@@ -6,7 +6,7 @@ public interface BrokerConsumerFactory {
 
     BrokerConsumer create(String brokerIp,
                           int brokerPort,
-                          String brokerName,
+                          Integer brokerId,
                           ProtocolType protocolType);
 
 

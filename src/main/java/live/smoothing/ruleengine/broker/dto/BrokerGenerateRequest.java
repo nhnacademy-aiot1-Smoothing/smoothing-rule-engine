@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
 
 @Getter
 @AllArgsConstructor
@@ -14,6 +13,6 @@ public class BrokerGenerateRequest {
 
     private String brokerIp;
     private int brokerPort;
-    private String brokerName;
+    private Integer brokerId;
     private ProtocolType protocolType;
 }
