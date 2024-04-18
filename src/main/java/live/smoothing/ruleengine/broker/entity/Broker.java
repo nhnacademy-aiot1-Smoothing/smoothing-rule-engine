@@ -32,7 +32,6 @@ public class Broker {
     @JoinColumn(name = "protocol_type")
     private ProtocolType protocolType;
 
-    @OneToMany(mappedBy = "broker", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "broker", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Sensor> sensors;
-
 }
