@@ -1,5 +1,8 @@
 package live.smoothing.ruleengine.node;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonPrimitive;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
 import com.influxdb.client.WriteApiBlocking;
@@ -54,10 +57,18 @@ public class InfluxDbInsertNode extends Node {
                 }
 
                 builder.append(" ").append(VALUE_KEY);
-                if (sensorMessage.getAttribute(VALUE_KEY) instanceof String) {
+                if(sensorMessage.getAttribute(VALUE_KEY)!=null && sensorMessage.getAttribute(VALUE_KEY) instanceof JsonPrimitive){
+                if (((JsonPrimitive)sensorMessage.getAttribute(VALUE_KEY)).isString()) {
                     builder.append("=\"").append(sensorMessage.getAttribute(VALUE_KEY)).append("\"");
                 } else {
-                    builder.append("=").append(sensorMessage.getAttribute(VALUE_KEY));
+                    System.out.println(sensorMessage.getAttribute(VALUE_KEY));
+                        builder.append("=").append(sensorMessage.getAttribute(VALUE_KEY));
+                }}else{
+                    builder.append("=").append(0);
+                }
+                log.error("{}", sensorMessage);
+                if (sensorMessage.getAttribute(TIME_KEY) == null) {
+                    System.out.println(sensorMessage);
                 }
 
                 Instant instant = Instant.ofEpochMilli(Long.parseLong(sensorMessage.getAttribute(TIME_KEY).toString()));
@@ -68,6 +79,8 @@ public class InfluxDbInsertNode extends Node {
 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+            }catch (NullPointerException e){
+                log.error("{}", e);
             }
         }
     }

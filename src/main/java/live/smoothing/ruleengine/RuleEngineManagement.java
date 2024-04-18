@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.Objects.isNull;
 
@@ -32,6 +34,7 @@ public class RuleEngineManagement {
     private final SensorService sensorService;
     private final BrokerConsumerFactory brokerConsumerFactory;
     private final NodeManager nodeManager;
+
 
     public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory, NodeManager nodeManager) {
 
@@ -94,7 +97,9 @@ public class RuleEngineManagement {
     public void consume(SensorData sensorData) {
         // RuleEngine 에서 데이터를 처리하는 로직
 
-        nodeManager.putToReceiver(sensorData);
+        for(int i = 0;i<10;i++) {
+            nodeManager.putToReceiver(sensorData);
+        }
     }
 
     /**

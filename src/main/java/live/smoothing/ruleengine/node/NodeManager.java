@@ -40,13 +40,31 @@ public class NodeManager {
         topicParsingNode.connect(0, s.getInputWire());
         s.start();
 
-        Node i = new InfluxDbInsertNode("influxDbInsert", 0,
-        "http://133.186.144.22:8086",
-        "lNHA8r2lkHwPtfHfDXLCC47iF_ZhLPbsw2PvP9a_ofKe46wXa1B8aUBenjoL1ryGbdr5KHzmSvg9258VxBlKdg==",
+        Node i1 = new InfluxDbInsertNode("influxDbInsert", 0,
+        "http://133.186.251.19:8086",
+        "aJVmO4mV3F9HnIq0zFuOE4tgJ3SamMeA1zPCY4IruPeRH8cjHjz6IqozDbVVHtk8P1ZSJzxwotZITWDnl2W6Tg==",
         "smoothing",
-        "test");
-        s.connect(0, i.getInputWire());
-        i.start();
+        "smoothing");
+
+        Node i2 = new InfluxDbInsertNode("influxDbInsert", 0,
+                "http://133.186.251.19:8086",
+                "aJVmO4mV3F9HnIq0zFuOE4tgJ3SamMeA1zPCY4IruPeRH8cjHjz6IqozDbVVHtk8P1ZSJzxwotZITWDnl2W6Tg==",
+                "smoothing",
+                "smoothing");
+
+        s.connect(0, i1.getInputWire());
+        s.connect(0, i2.getInputWire());
+        i1.start();
+        i2.start();
+        for(int i = 0;i<8;i++){
+            Node n = new InfluxDbInsertNode("influxDbInsert", 0,
+                    "http://133.186.251.19:8086",
+                    "aJVmO4mV3F9HnIq0zFuOE4tgJ3SamMeA1zPCY4IruPeRH8cjHjz6IqozDbVVHtk8P1ZSJzxwotZITWDnl2W6Tg==",
+                    "smoothing",
+                    "smoothing");
+            s.connect(0, n.getInputWire());
+            n.start();
+        }
     }
 
     public void putToReceiver(SensorData sensorData) {
