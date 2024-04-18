@@ -1,6 +1,6 @@
 package live.smoothing.ruleengine.node;
 
-import live.smoothing.ruleengine.checker.Checker;
+import live.smoothing.ruleengine.node.checker.Checker;
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
 
 public class SwitchNode extends Node {
