@@ -1,7 +1,6 @@
 package live.smoothing.ruleengine.sensor.entity;
 
 import live.smoothing.ruleengine.broker.entity.Broker;
-import live.smoothing.ruleengine.topic.entity.Topic;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
