@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Slf4j
 public class NodeManager {
-    @Getter
+
     private final Node receiverNode;
     private final Map<String, Node> defaultNodes = new HashMap<>();
     private final Map<String, List<Node>> copiedNodes = new HashMap<>();
@@ -20,7 +20,7 @@ public class NodeManager {
     public NodeManager(NodeGenerator nodeGenerator) {
         receiverNode = new ReceiverNode("receiver", 1);
         //생성 후 변경
-        nodeGenerator.init();
+        nodeGenerator.init(receiverNode);
     }
 
     public void putToReceiver(SensorData sensorData) {

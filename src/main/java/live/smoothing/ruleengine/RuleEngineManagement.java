@@ -4,7 +4,10 @@ import live.smoothing.ruleengine.broker.dto.BrokerGenerateRequest;
 import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
+import live.smoothing.ruleengine.mq.consumer.MqttBrokerConsumer;
 import live.smoothing.ruleengine.node.NodeManager;
+import live.smoothing.ruleengine.response.BrokerResponseDto;
+import live.smoothing.ruleengine.sensor.entity.MqttSensorData;
 import live.smoothing.ruleengine.sensor.entity.SensorData;
 import live.smoothing.ruleengine.sensor.service.SensorService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +45,24 @@ public class RuleEngineManagement {
         this.nodeManager = nodeManager;
 
         init();
+//        MqttBrokerConsumer mqttBrokerConsumer = new MqttBrokerConsumer(
+//                30,
+//                30,
+//                true,
+//                true,
+//                this,
+//            "133.186.153.19",
+//"test",
+//                1883,
+//                "test"
+//        );
+//        try {
+//            mqttBrokerConsumer.start();
+//            mqttBrokerConsumer.subscribe("#");
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     /**
@@ -49,23 +70,21 @@ public class RuleEngineManagement {
      */
     private void init() {
 
-//        List<Broker> brokers = brokerService.getBrokers();
-//
-//        for (Broker g : brokers) {
-//            addBroker(new BrokerGenerateRequest(g.getBrokerIp(), g.getBrokerPort(), g.getBrokerName(), g.getProtocolType()));
-//        }
-//
-//        // 센서 목록 가져와서 각각의 브로커에 추가
-//        for (Broker g : brokers) {
-//
-//            List<Sensor> sensors = g.getSensors();
-//
-//            for (Sensor s : sensors) {
-//                for (Topic t : s.getTopics()) {
-//                    subscribe(g.getBrokerId(), t.getTopic());
-//                }
-//            }
-//        }
+        List<BrokerResponseDto> brokerResponseDtos = sensorService.getBrokerGenerateRequest();
+
+        for (BrokerResponseDto brokerResponseDto : brokerResponseDtos) {
+            BrokerGenerateRequest brokerGenerateRequest = BrokerGenerateRequest.builder()
+                    .brokerIp(brokerResponseDto.getIp())
+                    .brokerPort(brokerResponseDto.getPort())
+                    .brokerId(brokerResponseDto.getId())
+                    .protocolType(brokerResponseDto.getProtocolType())
+                    .build();
+            addBroker(brokerGenerateRequest);
+            List<String> topics = brokerResponseDto.getTopics();
+            for(String topic : topics) {
+                subscribe(brokerResponseDto.getId(), topic);
+            }
+        }
 
     }
 
@@ -141,6 +160,7 @@ public class RuleEngineManagement {
 
     }
 
+
     /**
      * Broker 를 제거하는 메소드
      *
@@ -155,18 +175,4 @@ public class RuleEngineManagement {
         brokerConsumers.remove(brokerId);
     }
 
-    //안 쓸 것 같은데 남겨둠
-//    /**
-//     * Sensor 를 추가하는 메소드
-//     */
-//    public void addSensor() {
-//        // RuleEngine 에서 Sensor 를 추가하는 로직
-//    }
-//
-//    /**
-//     * Sensor 를 제거하는 메소드
-//     */
-//    public void removeSensor() {
-//        // RuleEngine 에서 Sensor 를 제거하는 로직
-//    }
 }

@@ -11,10 +11,10 @@ import java.util.List;
 public class BrokerResponseDto {
 
     @NonNull
-    private Integer ip;
+    private String ip;
 
     @NonNull
-    private String id;
+    private Integer id;
 
     @NonNull
     private Integer port;

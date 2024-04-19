@@ -1,5 +1,5 @@
 package live.smoothing.ruleengine.node;
 
 public interface NodeGenerator {
-    void init();
+    void init(Node receiverNode);
 }
