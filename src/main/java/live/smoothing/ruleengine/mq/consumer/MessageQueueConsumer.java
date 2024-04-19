@@ -1,7 +1,13 @@
 package live.smoothing.ruleengine.mq.consumer;
 
-public interface MessageQueueConsumer {
+import live.smoothing.ruleengine.RuleEngineManagement;
 
-    void connect();
-    void disconnect();
+public abstract class MessageQueueConsumer {
+
+    protected final RuleEngineManagement ruleEngineManagement;
+
+    public MessageQueueConsumer(RuleEngineManagement ruleEngineManagement) {
+        this.ruleEngineManagement = ruleEngineManagement;
+    }
+
 }

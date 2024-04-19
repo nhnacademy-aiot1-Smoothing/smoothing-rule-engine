@@ -6,7 +6,6 @@ import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
 import live.smoothing.ruleengine.node.NodeManager;
 import live.smoothing.ruleengine.sensor.entity.SensorData;
-import live.smoothing.ruleengine.sensor.entity.Topic;
 import live.smoothing.ruleengine.sensor.service.SensorService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -152,6 +151,7 @@ public class RuleEngineManagement {
         for (String topic : topics.get(brokerId)) {
             unsubscribe(brokerId, topic);
         }
+        topics.remove(brokerId);
         brokerConsumers.remove(brokerId);
     }
 

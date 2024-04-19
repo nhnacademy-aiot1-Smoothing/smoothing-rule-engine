@@ -6,10 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BrokerGenerateRequest {
-
-    private String brokerIp;
-    private int brokerPort;
+public class BrokerDeleteRequest {
     private Integer brokerId;
-    private String protocolType;
+
 }

@@ -1,7 +1,5 @@
 package live.smoothing.ruleengine.response;
 
-import live.smoothing.ruleengine.sensor.entity.Sensor;
-import live.smoothing.ruleengine.sensor.entity.Topic;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -20,6 +18,9 @@ public class BrokerResponseDto {
 
     @NonNull
     private Integer port;
+
+    @NonNull
+    private String protocolType;
 
     private List<String> topics;
 }

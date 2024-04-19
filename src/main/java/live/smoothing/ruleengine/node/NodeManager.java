@@ -11,16 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
 public class NodeManager {
     @Getter
     private final Node receiverNode;
     private final Map<String, Node> defaultNodes = new HashMap<>();
     private final Map<String, List<Node>> copiedNodes = new HashMap<>();
 
-    public NodeManager() {
-        receiverNode = new ReceiverNode("receiver", 0);
+    public NodeManager(NodeGenerator nodeGenerator) {
+        receiverNode = new ReceiverNode("receiver", 1);
         //생성 후 변경
+        nodeGenerator.init();
     }
 
     public void putToReceiver(SensorData sensorData) {
