@@ -39,7 +39,7 @@ public class TopicParsingNode extends Node {
                     String finalKey = "/"+set.getKey()+"/";
                     if(topic.contains(finalKey)){
                         String finalValue = letParseString(finalKey, topic);
-                        goal.addAttribute(finalKey, finalValue);
+                        goal.addAttribute(set.getValue(), finalValue);
                     }
                 }
 

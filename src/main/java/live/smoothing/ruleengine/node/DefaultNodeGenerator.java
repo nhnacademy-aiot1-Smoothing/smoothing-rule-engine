@@ -19,7 +19,8 @@ public class DefaultNodeGenerator implements NodeGenerator {
                         "e", "event",
                         "d", "device",
                         "de", "description",
-                        "ph", "phase"
+                        "ph", "phase",
+                        "t", "type"
                       )
                 );
 
@@ -37,18 +38,18 @@ public class DefaultNodeGenerator implements NodeGenerator {
                 "influxDbInsertNode",
                 0,
                 "http://133.186.251.19:8086",
-                "token",
+                "CdCBm4nhSixa7-WBrHs83PaYvG1f8LJeIgIgmrl84iLSxjG7K_usTvUrKPXem9s_xYwRAH17qY9Ls7Rgma2D3g==",
                 "smoothing",
-                "test"
+                "test2"
         );
 
         Node influxDbInsertNode2 = new InfluxDbInsertNode(
                 "influxDbInsertNode",
                 0,
                 "http://133.186.251.19:8086",
-                "JD1FKMybmMdyPlvqlcbOCGeoJBzi4pK_5EQTqw8hHVv2WQ1WmtPzDfbjsh9OmnCwQTKarkXbOczVEczmyjw9UQ==",
+                "CdCBm4nhSixa7-WBrHs83PaYvG1f8LJeIgIgmrl84iLSxjG7K_usTvUrKPXem9s_xYwRAH17qY9Ls7Rgma2D3g==",
                 "smoothing",
-                "test"
+                "test2"
         );
 
 

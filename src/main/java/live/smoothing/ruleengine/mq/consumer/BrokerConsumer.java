@@ -1,5 +1,7 @@
 package live.smoothing.ruleengine.mq.consumer;
 
+import live.smoothing.ruleengine.RuleEngineManagement;
+
 public interface BrokerConsumer {
 
     /**
@@ -14,6 +16,7 @@ public interface BrokerConsumer {
      */
     String getBrokerName();
 
+    void setRuleEngineManagement(RuleEngineManagement ruleEngineManagement);
     /**
      * message queue 의 topic 을 구독하기 위한 메소드
      */
