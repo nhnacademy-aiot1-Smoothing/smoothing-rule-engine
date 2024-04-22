@@ -44,7 +44,11 @@ public class RuleEngineManagement {
         this.brokerConsumerFactory = brokerConsumerFactory;
         this.nodeManager = nodeManager;
 
-        init();
+        try{
+            init();
+        } catch (Exception e) {
+            log.error("RuleEngineManagement init error", e);
+        }
         //todo 사용할 때 주석 해제
 //        MqttBrokerConsumer mqttBrokerConsumer = new MqttBrokerConsumer(
 //                30,
