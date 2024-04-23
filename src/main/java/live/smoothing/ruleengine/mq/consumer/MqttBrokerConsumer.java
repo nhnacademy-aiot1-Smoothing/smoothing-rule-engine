@@ -3,9 +3,12 @@ package live.smoothing.ruleengine.mq.consumer;
 import live.smoothing.ruleengine.RuleEngineManagement;
 import live.smoothing.ruleengine.sensor.entity.MqttSensorData;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
+@Slf4j
 @RequiredArgsConstructor
 public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
 
@@ -13,7 +16,7 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
     private final int keepAliveInterval;
     private final boolean cleanSession;
     private final boolean automaticReconnect;
-    private final RuleEngineManagement ruleEngineManagement;
+    private RuleEngineManagement ruleEngineManagement;
     private final String brokerUri;
     private final String brokerName;
     private final int port;
@@ -31,6 +34,11 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
     public String getBrokerName() {
 
         return brokerName;
+    }
+
+    @Override
+    public void setRuleEngineManagement(RuleEngineManagement ruleEngineManagement) {
+        this.ruleEngineManagement = ruleEngineManagement;
     }
 
     @Override
@@ -79,7 +87,11 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
 
-        ruleEngineManagement.consume(new MqttSensorData(topic, new String(mqttMessage.getPayload())));
+        MqttSensorData data = new MqttSensorData(topic, new String(mqttMessage.getPayload()));
+        log.error("messageArrived : {}", data);
+        ruleEngineManagement.consume(data);
+
+//        ruleEngineManagement.consume(new MqttSensorData(topic, new String(mqttMessage.getPayload())));
     }
 
     @Override

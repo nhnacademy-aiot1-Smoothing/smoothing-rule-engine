@@ -1,6 +1,7 @@
 package live.smoothing.ruleengine.response;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
@@ -10,16 +11,12 @@ import java.util.List;
 @Setter
 public class BrokerResponseDto {
 
-    @NonNull
     private String ip;
 
-    @NonNull
     private Integer id;
 
-    @NonNull
     private Integer port;
 
-    @NonNull
     private String protocolType;
 
     private List<String> topics;

@@ -1,7 +1,9 @@
 package live.smoothing.ruleengine.mq.consumer;
 
-public class MqttBrokerConsumerFactory implements BrokerConsumerFactory {
+import live.smoothing.ruleengine.RuleEngineManagement;
+import org.springframework.beans.factory.annotation.Autowired;
 
+public class MqttBrokerConsumerFactory implements BrokerConsumerFactory {
     @Override
     public BrokerConsumer create(String brokerIp, int brokerPort, Integer brokerId, String protocolType) {
 
@@ -10,7 +12,6 @@ public class MqttBrokerConsumerFactory implements BrokerConsumerFactory {
                 30,
                 true,
                 true,
-                null,
                 brokerIp,
                 brokerId.toString(),
                 brokerPort,

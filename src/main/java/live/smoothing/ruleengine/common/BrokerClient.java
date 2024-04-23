@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-@FeignClient(name = "broker-detail-service", path = "/api/broker")
+@FeignClient(name = "device-service", path = "/api/device")
 public interface BrokerClient {
 
-    @GetMapping("/search/loadBrokerByBrokerId")
+    @GetMapping("/initialization")
     public List<BrokerResponseDto> loadBrokerByBrokerId();
 
 }
