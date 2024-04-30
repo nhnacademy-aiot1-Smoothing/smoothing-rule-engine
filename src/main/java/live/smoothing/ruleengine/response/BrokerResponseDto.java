@@ -6,18 +6,19 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 public class BrokerResponseDto {
 
-    private String ip;
+    private Integer brokerId;
 
-    private Integer id;
+    private String brokerIp;
 
-    private Integer port;
+    private Integer brokerPort;
 
     private String protocolType;
 
-    private List<String> topics;
+    private Set<String> topics;
 }

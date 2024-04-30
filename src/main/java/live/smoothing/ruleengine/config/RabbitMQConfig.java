@@ -34,64 +34,6 @@ public class RabbitMQConfig {
     private String virtualHost;
 
     @Bean
-    public DirectExchange brokerDirectExchange() {
-        return new DirectExchange("broker-direct-exchange");
-    }
-
-    @Bean
-    public Queue addBrokerQueue() {
-        return new Queue("add-broker-queue");
-    }
-
-    @Bean
-    public Queue deleteBrokerQueue() {
-        return new Queue("delete-broker-queue");
-    }
-
-    @Bean
-    public Binding addBrokerBinding() {
-        return BindingBuilder.bind(addBrokerQueue())
-                .to(brokerDirectExchange())
-                .with("add-broker");
-    }
-
-    @Bean
-    public Binding deleteBrokerBinding() {
-        return BindingBuilder.bind(deleteBrokerQueue())
-                .to(brokerDirectExchange())
-                .with("delete-broker");
-    }
-
-    @Bean
-    public DirectExchange topicDirectExchange() {
-        return new DirectExchange("topic-direct-exchange");
-    }
-
-    @Bean
-    public Queue addTopicQueue() {
-        return new Queue("add-topic-queue");
-    }
-
-    @Bean
-    public Queue deleteTopicQueue() {
-        return new Queue("delete-topic-queue");
-    }
-
-    @Bean
-    public Binding addTopicBinding() {
-        return BindingBuilder.bind(addTopicQueue())
-                .to(topicDirectExchange())
-                .with("add-topic");
-    }
-
-    @Bean
-    public Binding deleteTopicBinding() {
-        return BindingBuilder.bind(deleteTopicQueue())
-                .to(topicDirectExchange())
-                .with("delete-topic");
-    }
-
-    @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         connectionFactory.setHost(host);

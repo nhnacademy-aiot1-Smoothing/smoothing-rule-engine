@@ -1,21 +1,16 @@
 package live.smoothing.ruleengine;
 
-import live.smoothing.ruleengine.broker.dto.BrokerGenerateRequest;
+import live.smoothing.ruleengine.broker.dto.BrokerAddRequest;
 import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
-import live.smoothing.ruleengine.mq.consumer.MqttBrokerConsumer;
 import live.smoothing.ruleengine.node.NodeManager;
 import live.smoothing.ruleengine.response.BrokerResponseDto;
-import live.smoothing.ruleengine.sensor.entity.MqttSensorData;
 import live.smoothing.ruleengine.sensor.entity.SensorData;
 import live.smoothing.ruleengine.sensor.service.SensorService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
@@ -27,29 +22,26 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class RuleEngineManagement {
 
-    private final Map<Integer, BrokerConsumer> brokerConsumers;
-    private final Map<Integer, List<String>> topics;
+    private final Map<Integer, BrokerConsumer> brokerConsumers = new HashMap<>();
+    private final Map<Integer, List<String>> topics = new HashMap<>();
     private final BrokerService brokerService;
     private final SensorService sensorService;
     private final BrokerConsumerFactory brokerConsumerFactory;
     private final NodeManager nodeManager;
 
-
     public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory, NodeManager nodeManager) {
 
-        this.brokerConsumers = new HashMap<>();
-        this.topics = new HashMap<>();
         this.sensorService = sensorService;
         this.brokerService = brokerService;
         this.brokerConsumerFactory = brokerConsumerFactory;
         this.nodeManager = nodeManager;
 
-        try{
+        try {
             init();
         } catch (Exception e) {
             log.error("RuleEngineManagement init error", e);
         }
-        //todo 사용할 때 주석 해제
+        //device 없이 사용할 init 주석처리 후 주석 해제
 //        MqttBrokerConsumer mqttBrokerConsumer = new MqttBrokerConsumer(
 //                30,
 //                30,
@@ -78,16 +70,16 @@ public class RuleEngineManagement {
         List<BrokerResponseDto> brokerResponseDtos = sensorService.getBrokerGenerateRequest();
 
         for (BrokerResponseDto brokerResponseDto : brokerResponseDtos) {
-            BrokerGenerateRequest brokerGenerateRequest = BrokerGenerateRequest.builder()
-                    .brokerIp(brokerResponseDto.getIp())
-                    .brokerPort(brokerResponseDto.getPort())
-                    .brokerId(brokerResponseDto.getId())
+            BrokerAddRequest brokerAddRequest = BrokerAddRequest.builder()
+                    .brokerIp(brokerResponseDto.getBrokerIp())
+                    .brokerPort(brokerResponseDto.getBrokerPort())
+                    .brokerId(brokerResponseDto.getBrokerId())
                     .protocolType(brokerResponseDto.getProtocolType())
                     .build();
-            addBroker(brokerGenerateRequest);
-            List<String> topics = brokerResponseDto.getTopics();
-            for(String topic : topics) {
-                subscribe(brokerResponseDto.getId(), topic);
+            addBroker(brokerAddRequest);
+            Set<String> topics = brokerResponseDto.getTopics();
+            for (String topic : topics) {
+                subscribe(brokerResponseDto.getBrokerId(), topic);
             }
         }
 
@@ -113,13 +105,18 @@ public class RuleEngineManagement {
 
         BrokerConsumer brokerConsumer = brokerConsumers.get(brokerId);
 
-        if (isNull(brokerConsumer)) {
-            throw new IllegalArgumentException("BrokerConsumer not found");
+        if(isNull(brokerConsumer)) {
+            throw new RuntimeException("Broker is not exist");
         }
 
         try {
             brokerConsumer.subscribe(topic);
-            topics.get(brokerId).add(topic);
+            if (topics.get(brokerId) == null) {
+                topics.put(brokerId, new LinkedList<>(Collections.singletonList(topic)));
+            } else {
+                topics.get(brokerId).add(topic);
+            }
+
         } catch (Exception e) {
             log.error("subscribe error", e);
         }
@@ -129,13 +126,13 @@ public class RuleEngineManagement {
      * Broker 에서 Topic 을 구독 취소하는 메소드
      *
      * @param brokerId Broker ID
-     * @param topic      Topic
+     * @param topic    Topic
      */
     public void unsubscribe(Integer brokerId, String topic) {
         BrokerConsumer brokerConsumer = brokerConsumers.get(brokerId);
 
-        if (isNull(brokerConsumer)) {
-            throw new IllegalArgumentException("BrokerConsumer not found");
+        if(isNull(brokerConsumer)) {
+            throw new RuntimeException("Broker is not exist");
         }
 
         try {
@@ -151,17 +148,18 @@ public class RuleEngineManagement {
      *
      * @param request Broker 정보
      */
-    public void addBroker(BrokerGenerateRequest request) {
+    public void addBroker(BrokerAddRequest request) {
 
         BrokerConsumer brokerConsumer = brokerConsumerFactory.create(request.getBrokerIp(), request.getBrokerPort(), request.getBrokerId(), request.getProtocolType());
-        brokerConsumers.put(request.getBrokerId(), brokerConsumer);
-        brokerConsumer.setRuleEngineManagement(this);
-        topics.put(request.getBrokerId(), new LinkedList<>());
-
         try {
             brokerConsumer.start();
+            brokerConsumers.put(request.getBrokerId(), brokerConsumer);
+            brokerConsumer.setRuleEngineManagement(this);
+            topics.put(request.getBrokerId(), new LinkedList<>());
+
         } catch (Exception e) {
             log.error("Broker start error", e);
+            //todo 연결 실패 mq 에러 처리
         }
 
     }
@@ -173,12 +171,21 @@ public class RuleEngineManagement {
      * @param brokerId Broker ID
      */
     public void removeBroker(Integer brokerId) {
-        // RuleEngine 에서 Broker 를 제거하는 로직
-        for (String topic : topics.get(brokerId)) {
-            unsubscribe(brokerId, topic);
+
+        if(topics.get(brokerId) != null) {
+            for (String topic : topics.get(brokerId)) {
+                unsubscribe(brokerId, topic);
+                topics.remove(brokerId);
+            }
         }
-        topics.remove(brokerId);
+        try {
+            brokerConsumers.get(brokerId).stop();
+        } catch (Exception e) {
+            log.error("Broker stop error", e);
+            //todo 연결 해제 실패 mq 에러 처리
+        }
         brokerConsumers.remove(brokerId);
+
     }
 
 }

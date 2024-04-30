@@ -30,7 +30,7 @@ public class TopicParsingNode extends Node {
             try {
 
                 SensorMessage goal = tryGetMessage();
-                log.error("parsing node message : {}", goal);
+//                log.error("parsing node message : {}", goal);
 
                 String topic = goal.getAttribute("topic").toString();
                 String payload = goal.getAttribute("payload").toString();

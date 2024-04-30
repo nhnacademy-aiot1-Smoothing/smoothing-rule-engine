@@ -22,7 +22,7 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
     private final int port;
     private final String clientId;
 
-    MqttClient client;
+    private MqttClient client;
 
     @Override
     public String getBrokerUri() {
@@ -65,33 +65,30 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
         options.setConnectionTimeout(connectionTimeout);
         options.setKeepAliveInterval(keepAliveInterval);
         client.connect(options);
+        log.debug("브로커 연결 성공 : {}", brokerUri);
     }
 
     @Override
     public void stop() throws Exception {
 
-        client.disconnect();
+        if (client.isConnected()) {
+            client.disconnect();
+        }
         client.close();
     }
 
     @Override
     public void connectionLost(Throwable throwable) {
 
-        try {
-            start();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        //todo error mq
     }
 
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
 
         MqttSensorData data = new MqttSensorData(topic, new String(mqttMessage.getPayload()));
-        log.error("messageArrived : {}", data);
+        log.debug("messageArrived : {}", data);
         ruleEngineManagement.consume(data);
-
-//        ruleEngineManagement.consume(new MqttSensorData(topic, new String(mqttMessage.getPayload())));
     }
 
     @Override

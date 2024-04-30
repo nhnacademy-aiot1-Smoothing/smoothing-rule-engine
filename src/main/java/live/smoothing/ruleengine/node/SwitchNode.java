@@ -19,7 +19,7 @@ public class SwitchNode extends Node {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 SensorMessage message = tryGetMessage();
-                log.error("switch node message : {}", message);
+//                log.error("switch node message : {}", message);
 
                 for (int i = 0; i < getOutputPortCount(); i++) {
                     if (checkers[i].check(message)) {
