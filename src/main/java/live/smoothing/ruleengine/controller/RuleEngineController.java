@@ -1,7 +1,7 @@
 package live.smoothing.ruleengine.controller;
 
 import live.smoothing.ruleengine.RuleEngineManagement;
-import live.smoothing.ruleengine.broker.dto.BrokerAddRequest;
+import live.smoothing.ruleengine.broker.dto.BrokerGenerateRequest;
 import live.smoothing.ruleengine.sensor.dto.TopicRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,8 @@ public class RuleEngineController {
     private final RuleEngineManagement ruleEngineManagement;
 
     @PostMapping("/broker")
-    public ResponseEntity<Void> addBroker(@RequestBody BrokerAddRequest brokerAddRequest) {
-        ruleEngineManagement.addBroker(brokerAddRequest);
+    public ResponseEntity<Void> addBroker(@RequestBody BrokerGenerateRequest brokerGenerateRequest) {
+        ruleEngineManagement.addBroker(brokerGenerateRequest);
         return ResponseEntity.ok().build();
     }
 

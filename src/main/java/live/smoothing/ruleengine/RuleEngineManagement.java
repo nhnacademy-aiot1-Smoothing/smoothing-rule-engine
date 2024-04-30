@@ -1,15 +1,19 @@
 package live.smoothing.ruleengine;
 
-import live.smoothing.ruleengine.broker.dto.BrokerAddRequest;
+import live.smoothing.ruleengine.broker.dto.BrokerGenerateRequest;
+import live.smoothing.ruleengine.broker.dto.BrokerErrorRequest;
 import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
+import live.smoothing.ruleengine.mq.producer.ErrorProducer;
 import live.smoothing.ruleengine.node.NodeManager;
 import live.smoothing.ruleengine.response.BrokerResponseDto;
+import live.smoothing.ruleengine.sensor.dto.SensorErrorRequest;
 import live.smoothing.ruleengine.sensor.entity.SensorData;
 import live.smoothing.ruleengine.sensor.service.SensorService;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.util.Objects.isNull;
@@ -28,38 +32,33 @@ public class RuleEngineManagement {
     private final SensorService sensorService;
     private final BrokerConsumerFactory brokerConsumerFactory;
     private final NodeManager nodeManager;
+    private final ErrorProducer errorProducer;
 
-    public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory, NodeManager nodeManager) {
+    public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory, NodeManager nodeManager, ErrorProducer errorProducer) {
 
         this.sensorService = sensorService;
         this.brokerService = brokerService;
         this.brokerConsumerFactory = brokerConsumerFactory;
         this.nodeManager = nodeManager;
+        this.errorProducer = errorProducer;
 
         try {
             init();
         } catch (Exception e) {
-            log.error("RuleEngineManagement init error", e);
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(10000);
+                        init();
+                    } catch (Exception e) {
+                        log.error("RuleEngineManagement init retry error", e);
+                        run();
+                    }
+                }
+            });
+            thread.start();
         }
-        //device 없이 사용할 init 주석처리 후 주석 해제
-//        MqttBrokerConsumer mqttBrokerConsumer = new MqttBrokerConsumer(
-//                30,
-//                30,
-//                true,
-//                true,
-//                this,
-//            "133.186.153.19",
-//"test",
-//                1883,
-//                "test"
-//        );
-//        try {
-//            mqttBrokerConsumer.start();
-//            mqttBrokerConsumer.subscribe("#");
-//
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     /**
@@ -70,13 +69,13 @@ public class RuleEngineManagement {
         List<BrokerResponseDto> brokerResponseDtos = sensorService.getBrokerGenerateRequest();
 
         for (BrokerResponseDto brokerResponseDto : brokerResponseDtos) {
-            BrokerAddRequest brokerAddRequest = BrokerAddRequest.builder()
+            BrokerGenerateRequest brokerGenerateRequest = BrokerGenerateRequest.builder()
                     .brokerIp(brokerResponseDto.getBrokerIp())
                     .brokerPort(brokerResponseDto.getBrokerPort())
                     .brokerId(brokerResponseDto.getBrokerId())
                     .protocolType(brokerResponseDto.getProtocolType())
                     .build();
-            addBroker(brokerAddRequest);
+            addBroker(brokerGenerateRequest);
             Set<String> topics = brokerResponseDto.getTopics();
             for (String topic : topics) {
                 subscribe(brokerResponseDto.getBrokerId(), topic);
@@ -119,6 +118,11 @@ public class RuleEngineManagement {
 
         } catch (Exception e) {
             log.error("subscribe error", e);
+            SendSensorError(SensorErrorRequest.builder()
+                    .sensorErrorType("구독실패")
+                    .createdAt(LocalDateTime.now())
+                    .topic(topic)
+                    .build());
         }
     }
 
@@ -140,6 +144,11 @@ public class RuleEngineManagement {
             topics.get(brokerId).remove(topic);
         } catch (Exception e) {
             log.error("unsubscribe error", e);
+            SendSensorError(SensorErrorRequest.builder()
+                    .sensorErrorType("구독해제실패")
+                    .createdAt(LocalDateTime.now())
+                    .topic(topic)
+                    .build());
         }
     }
 
@@ -148,7 +157,7 @@ public class RuleEngineManagement {
      *
      * @param request Broker 정보
      */
-    public void addBroker(BrokerAddRequest request) {
+    public void addBroker(BrokerGenerateRequest request) {
 
         BrokerConsumer brokerConsumer = brokerConsumerFactory.create(request.getBrokerIp(), request.getBrokerPort(), request.getBrokerId(), request.getProtocolType());
         try {
@@ -159,7 +168,11 @@ public class RuleEngineManagement {
 
         } catch (Exception e) {
             log.error("Broker start error", e);
-            //todo 연결 실패 mq 에러 처리
+            sendBrokerError(BrokerErrorRequest.builder()
+                    .brokerErrorType("연결실패")
+                    .createdAt(LocalDateTime.now())
+                    .brokerId(request.getBrokerId())
+                    .build());
         }
 
     }
@@ -182,10 +195,31 @@ public class RuleEngineManagement {
             brokerConsumers.get(brokerId).stop();
         } catch (Exception e) {
             log.error("Broker stop error", e);
-            //todo 연결 해제 실패 mq 에러 처리
+            sendBrokerError(BrokerErrorRequest.builder()
+                    .brokerErrorType("연결해제실패")
+                    .createdAt(LocalDateTime.now())
+                    .brokerId(brokerId)
+                    .build());
         }
         brokerConsumers.remove(brokerId);
 
     }
 
+    /**
+     * Broker 에러를 추가하는 메소드
+     *
+     * @param request Broker 에러 정보
+     */
+    public void sendBrokerError(BrokerErrorRequest request) {
+        errorProducer.sendBrokerError(request);
+    }
+
+    /**
+     * Sensor 에러를 추가하는 메소드
+     *
+     * @param request Sensor 에러 정보
+     */
+    public void SendSensorError(SensorErrorRequest request) {
+        errorProducer.sendSensorError(request);
+    }
 }

@@ -69,4 +69,11 @@ public class RabbitMQConfig {
         factory.setMessageConverter(jackson2JsonMessageConverter());
         return factory;
     }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate() {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
+        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
+        return rabbitTemplate;
+    }
 }
