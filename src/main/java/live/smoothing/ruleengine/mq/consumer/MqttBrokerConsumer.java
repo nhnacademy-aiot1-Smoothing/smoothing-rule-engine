@@ -1,6 +1,7 @@
 package live.smoothing.ruleengine.mq.consumer;
 
 import live.smoothing.ruleengine.RuleEngineManagement;
+import live.smoothing.ruleengine.broker.dto.BrokerErrorRequest;
 import live.smoothing.ruleengine.sensor.entity.MqttSensorData;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,17 +9,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @RequiredArgsConstructor
 public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
 
+    private final int brokerId;
     private final int connectionTimeout;
     private final int keepAliveInterval;
     private final boolean cleanSession;
     private final boolean automaticReconnect;
     private RuleEngineManagement ruleEngineManagement;
     private final String brokerUri;
-    private final String brokerName;
     private final int port;
     private final String clientId;
 
@@ -31,9 +34,8 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
     }
 
     @Override
-    public String getBrokerName() {
-
-        return brokerName;
+    public int getBrokerId() {
+        return brokerId;
     }
 
     @Override
@@ -79,8 +81,11 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
 
     @Override
     public void connectionLost(Throwable throwable) {
-
-        //todo error mq
+        ruleEngineManagement.sendBrokerError(BrokerErrorRequest.builder()
+                        .brokerId(brokerId)
+                        .createdAt(LocalDateTime.now())
+                        .brokerErrorType(throwable.getMessage())
+                .build());
     }
 
     @Override

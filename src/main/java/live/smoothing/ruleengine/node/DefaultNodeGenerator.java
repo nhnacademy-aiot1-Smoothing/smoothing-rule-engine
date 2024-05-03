@@ -37,19 +37,19 @@ public class DefaultNodeGenerator implements NodeGenerator {
         Node influxDbInsertNode1 = new InfluxDbInsertNode(
                 "influxDbInsertNode",
                 0,
-                "http://133.186.251.19:8086",
-                "CdCBm4nhSixa7-WBrHs83PaYvG1f8LJeIgIgmrl84iLSxjG7K_usTvUrKPXem9s_xYwRAH17qY9Ls7Rgma2D3g==",
+                "http://133.186.221.174:8086",
+                "sGwZkcFWUdCloR3qyI_6hwg_mBb6Y2NB1ZTsQxCS1AE2nBFBsDMVjvqIupjfgPNcnpM6rd4M2PaGWul5Fre45Q==",
                 "smoothing",
-                "test2"
+                "raw"
         );
 
         Node influxDbInsertNode2 = new InfluxDbInsertNode(
                 "influxDbInsertNode",
                 0,
-                "http://133.186.251.19:8086",
-                "CdCBm4nhSixa7-WBrHs83PaYvG1f8LJeIgIgmrl84iLSxjG7K_usTvUrKPXem9s_xYwRAH17qY9Ls7Rgma2D3g==",
+                "http://133.186.221.174:8086",
+                "sGwZkcFWUdCloR3qyI_6hwg_mBb6Y2NB1ZTsQxCS1AE2nBFBsDMVjvqIupjfgPNcnpM6rd4M2PaGWul5Fre45Q==",
                 "smoothing",
-                "test2"
+                "raw"
         );
 
 

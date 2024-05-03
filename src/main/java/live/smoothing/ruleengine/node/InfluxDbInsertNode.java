@@ -39,7 +39,7 @@ public class InfluxDbInsertNode extends Node {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 SensorMessage sensorMessage = tryGetMessage();
-                log.error("influx node message = {}", sensorMessage);
+                log.debug("influx node message = {}", sensorMessage);
 
                 WriteApiBlocking writeApi = influxDBClient.getWriteApiBlocking();
 
