@@ -4,6 +4,7 @@ import live.smoothing.ruleengine.RuleEngineManagement;
 import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
 import live.smoothing.ruleengine.mq.consumer.MqttBrokerConsumerFactory;
+import live.smoothing.ruleengine.mq.producer.ErrorProducer;
 import live.smoothing.ruleengine.node.DefaultNodeGenerator;
 import live.smoothing.ruleengine.node.NodeGenerator;
 import live.smoothing.ruleengine.node.NodeManager;
@@ -18,6 +19,7 @@ public class RuleEngineConfig {
 
     private final BrokerService brokerService;
     private final SensorService sensorService;
+    private final ErrorProducer errorProducer;
 
     @Bean
     public BrokerConsumerFactory brokerConsumerFactory() {
@@ -28,7 +30,11 @@ public class RuleEngineConfig {
     @Bean
     public RuleEngineManagement ruleEngineManagement() {
 
-        return new RuleEngineManagement(brokerService,sensorService, brokerConsumerFactory(), nodeManager());
+        return new RuleEngineManagement(brokerService
+                ,sensorService
+                , brokerConsumerFactory()
+                , nodeManager()
+                , errorProducer);
     }
 
     @Bean

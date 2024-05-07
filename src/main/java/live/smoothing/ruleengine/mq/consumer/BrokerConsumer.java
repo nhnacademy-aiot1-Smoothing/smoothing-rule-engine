@@ -11,11 +11,15 @@ public interface BrokerConsumer {
     String getBrokerUri();
 
     /**
-     * Broker 의 name 을 반환하는 메소드
-     * @return Broker name
+     * Broker 의 Id 를 반환하는 메소드
+     * @return Broker Id
      */
-    String getBrokerName();
+    int getBrokerId();
 
+    /**
+     * RuleEngineManagement 를 설정하는 메소드
+     * @param ruleEngineManagement RuleEngineManagement
+     */
     void setRuleEngineManagement(RuleEngineManagement ruleEngineManagement);
     /**
      * message queue 의 topic 을 구독하기 위한 메소드
