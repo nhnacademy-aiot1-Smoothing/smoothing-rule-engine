@@ -83,7 +83,6 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
     public void connectionLost(Throwable throwable) {
         ruleEngineManagement.sendBrokerError(BrokerErrorRequest.builder()
                         .brokerId(brokerId)
-                        .createdAt(LocalDateTime.now())
                         .brokerErrorType(throwable.getMessage())
                 .build());
     }
