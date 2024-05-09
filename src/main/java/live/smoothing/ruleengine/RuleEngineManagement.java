@@ -81,7 +81,7 @@ public class RuleEngineManagement {
                 subscribe(brokerResponseDto.getBrokerId(), topic);
             }
         }
-
+        log.info("RuleEngineManagement init success");
     }
 
     /**
@@ -170,7 +170,6 @@ public class RuleEngineManagement {
             log.error("Broker start error", e);
             sendBrokerError(BrokerErrorRequest.builder()
                     .brokerErrorType("연결실패")
-                    .createdAt(LocalDateTime.now())
                     .brokerId(request.getBrokerId())
                     .build());
         }
@@ -186,10 +185,20 @@ public class RuleEngineManagement {
     public void removeBroker(Integer brokerId) {
 
         if(topics.get(brokerId) != null) {
-            for (String topic : topics.get(brokerId)) {
-                unsubscribe(brokerId, topic);
-                topics.remove(brokerId);
-            }
+            BrokerConsumer brokerConsumers = this.brokerConsumers.get(brokerId);
+            topics.get(brokerId).forEach(topic -> {
+                try {
+                    brokerConsumers.unsubscribe(topic);
+                } catch (Exception e) {
+                    log.error("unsubscribe error", e);
+                    SendSensorError(SensorErrorRequest.builder()
+                            .sensorErrorType("구독해제실패")
+                            .createdAt(LocalDateTime.now())
+                            .topic(topic)
+                            .build());
+                }
+            });
+            topics.remove(brokerId);
         }
         try {
             brokerConsumers.get(brokerId).stop();
@@ -197,7 +206,6 @@ public class RuleEngineManagement {
             log.error("Broker stop error", e);
             sendBrokerError(BrokerErrorRequest.builder()
                     .brokerErrorType("연결해제실패")
-                    .createdAt(LocalDateTime.now())
                     .brokerId(brokerId)
                     .build());
         }
