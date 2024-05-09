@@ -28,13 +28,13 @@ public class RuleEngineController {
     }
 
     @PostMapping("/topic")
-    public ResponseEntity<Void> addTopic(@RequestBody TopicRequest topicRequest) {
+    public ResponseEntity<Void> addTopic(@RequestBody TopicRequest topicRequest) throws Exception {
         ruleEngineManagement.subscribe(topicRequest.getBrokerId(), topicRequest.getTopic());
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/topic")
-    public ResponseEntity<Void> deleteTopic(@RequestBody TopicRequest topicRequest) {
+    public ResponseEntity<Void> deleteTopic(@RequestBody TopicRequest topicRequest) throws Exception {
         ruleEngineManagement.unsubscribe(topicRequest.getBrokerId(), topicRequest.getTopic());
         return ResponseEntity.ok().build();
     }
