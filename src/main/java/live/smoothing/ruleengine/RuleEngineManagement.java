@@ -170,7 +170,6 @@ public class RuleEngineManagement {
             log.error("Broker start error", e);
             sendBrokerError(BrokerErrorRequest.builder()
                     .brokerErrorType("연결실패")
-                    .createdAt(LocalDateTime.now())
                     .brokerId(request.getBrokerId())
                     .build());
         }
@@ -207,7 +206,6 @@ public class RuleEngineManagement {
             log.error("Broker stop error", e);
             sendBrokerError(BrokerErrorRequest.builder()
                     .brokerErrorType("연결해제실패")
-                    .createdAt(LocalDateTime.now())
                     .brokerId(brokerId)
                     .build());
         }

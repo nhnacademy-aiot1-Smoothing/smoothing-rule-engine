@@ -7,11 +7,16 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
-@AllArgsConstructor
 public class BrokerErrorRequest {
 
     private Integer brokerId;
     private String brokerErrorType;
-    private LocalDateTime createdAt;
+    private String createdAt;
+
+    @Builder
+    public BrokerErrorRequest(Integer brokerId, String brokerErrorType) {
+        this.brokerId = brokerId;
+        this.brokerErrorType = brokerErrorType;
+        this.createdAt = LocalDateTime.now().toString();
+    }
 }
