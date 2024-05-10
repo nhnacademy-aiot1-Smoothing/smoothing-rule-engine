@@ -64,7 +64,7 @@ public class RuleEngineManagement {
     /**
      * 생성되었을 때 Api 에 저장된 브로커 및 센서, 토픽 정보를 가져와서 초기화
      */
-    private void init() {
+    private void init() throws Exception {
 
         List<BrokerResponseDto> brokerResponseDtos = sensorService.getBrokerGenerateRequest();
 
@@ -100,7 +100,7 @@ public class RuleEngineManagement {
      * @param brokerId Broker ID
      * @param topic    Topic
      */
-    public void subscribe(Integer brokerId, String topic) {
+    public void subscribe(Integer brokerId, String topic) throws Exception {
 
         BrokerConsumer brokerConsumer = brokerConsumers.get(brokerId);
 
@@ -108,22 +108,14 @@ public class RuleEngineManagement {
             throw new RuntimeException("Broker is not exist");
         }
 
-        try {
-            brokerConsumer.subscribe(topic);
-            if (topics.get(brokerId) == null) {
-                topics.put(brokerId, new LinkedList<>(Collections.singletonList(topic)));
-            } else {
-                topics.get(brokerId).add(topic);
-            }
+        brokerConsumer.subscribe(topic);
 
-        } catch (Exception e) {
-            log.error("subscribe error", e);
-            SendSensorError(SensorErrorRequest.builder()
-                    .sensorErrorType("구독실패")
-                    .createdAt(LocalDateTime.now())
-                    .topic(topic)
-                    .build());
+        if (topics.get(brokerId) == null) {
+            topics.put(brokerId, new LinkedList<>(Collections.singletonList(topic)));
+        } else {
+            topics.get(brokerId).add(topic);
         }
+
     }
 
     /**
@@ -132,24 +124,15 @@ public class RuleEngineManagement {
      * @param brokerId Broker ID
      * @param topic    Topic
      */
-    public void unsubscribe(Integer brokerId, String topic) {
+    public void unsubscribe(Integer brokerId, String topic) throws Exception {
         BrokerConsumer brokerConsumer = brokerConsumers.get(brokerId);
 
         if(isNull(brokerConsumer)) {
             throw new RuntimeException("Broker is not exist");
         }
 
-        try {
-            brokerConsumer.unsubscribe(topic);
-            topics.get(brokerId).remove(topic);
-        } catch (Exception e) {
-            log.error("unsubscribe error", e);
-            SendSensorError(SensorErrorRequest.builder()
-                    .sensorErrorType("구독해제실패")
-                    .createdAt(LocalDateTime.now())
-                    .topic(topic)
-                    .build());
-        }
+        brokerConsumer.unsubscribe(topic);
+        topics.get(brokerId).remove(topic);
     }
 
     /**
