@@ -1,15 +1,19 @@
 package live.smoothing.ruleengine.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import live.smoothing.ruleengine.RuleEngineManagement;
 import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
 import live.smoothing.ruleengine.mq.consumer.MqttBrokerConsumerFactory;
 import live.smoothing.ruleengine.mq.producer.ErrorProducer;
+import live.smoothing.ruleengine.mq.producer.NodeProducer;
+import live.smoothing.ruleengine.mq.producer.RabbitNodeProducer;
 import live.smoothing.ruleengine.node.DefaultNodeGenerator;
 import live.smoothing.ruleengine.node.NodeGenerator;
 import live.smoothing.ruleengine.node.NodeManager;
 import live.smoothing.ruleengine.sensor.service.SensorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,6 +24,7 @@ public class RuleEngineConfig {
     private final BrokerService brokerService;
     private final SensorService sensorService;
     private final ErrorProducer errorProducer;
+    private final RabbitTemplate rabbitTemplate;
 
     @Bean
     public BrokerConsumerFactory brokerConsumerFactory() {
@@ -39,11 +44,16 @@ public class RuleEngineConfig {
 
     @Bean
     public NodeGenerator nodeGenerator() {
-        return new DefaultNodeGenerator();
+        return new DefaultNodeGenerator(nodeProducer());
     }
 
     @Bean
     public NodeManager nodeManager(){
         return new NodeManager(nodeGenerator());
+    }
+
+    @Bean
+    public NodeProducer nodeProducer() {
+        return new RabbitNodeProducer(rabbitTemplate);
     }
 }
