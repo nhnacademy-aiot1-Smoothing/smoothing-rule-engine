@@ -21,7 +21,7 @@ public class ExtractNode extends Node {
             try {
                 SensorMessage message = tryGetMessage();
                 SensorMessage newMessage = new SensorMessage();
-                message.getKeys().stream().filter(e -> !keys.contains(e)).forEach(e -> newMessage.addAttribute(e, message.getAttribute(e)));
+                message.getKeys().stream().filter(keys::contains).forEach(e -> newMessage.addAttribute(e, message.getAttribute(e)));
                 for (int i = 0; i < getOutputPortCount(); i++) {
                     output(i, newMessage);
                 }
