@@ -20,12 +20,13 @@ public class ExtractNode extends Node {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 SensorMessage message = tryGetMessage();
-                message.getKeys().stream().filter(e -> !keys.contains(e)).forEach(message::deleteAttribute);
+                SensorMessage newMessage = new SensorMessage();
+                message.getKeys().stream().filter(e -> !keys.contains(e)).forEach(e -> newMessage.addAttribute(e, message.getAttribute(e)));
                 for (int i = 0; i < getOutputPortCount(); i++) {
-                    output(i, message);
+                    output(i, newMessage);
                 }
             } catch (Exception e) {
-                log.error("ReceiverNode에서 메시지를 가져오는데 실패했습니다.");
+                log.error("ExtractNode : {}", e.getMessage());
             }
         }
     }

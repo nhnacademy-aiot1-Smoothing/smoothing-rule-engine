@@ -59,6 +59,7 @@ public class RuleEngineManagement {
             });
             thread.start();
         }
+        log.info("RuleEngineManagement create success");
     }
 
     /**
