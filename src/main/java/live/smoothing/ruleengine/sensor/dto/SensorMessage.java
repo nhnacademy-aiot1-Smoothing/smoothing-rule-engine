@@ -61,4 +61,8 @@ public class SensorMessage {
     public String toString(){
         return sensorAttributes.toString();
     }
+
+    public Map<String, Object> getSensorAttributes() {
+        return sensorAttributes;
+    }
 }
