@@ -59,6 +59,7 @@ public class RuleEngineManagement {
             });
             thread.start();
         }
+        log.info("RuleEngineManagement create success");
     }
 
     /**
@@ -115,7 +116,7 @@ public class RuleEngineManagement {
         } else {
             topics.get(brokerId).add(topic);
         }
-
+        log.info("topic subscribe success");
     }
 
     /**
@@ -133,6 +134,7 @@ public class RuleEngineManagement {
 
         brokerConsumer.unsubscribe(topic);
         topics.get(brokerId).remove(topic);
+        log.info("topic unsubscribe success");
     }
 
     /**
@@ -156,7 +158,7 @@ public class RuleEngineManagement {
                     .brokerId(request.getBrokerId())
                     .build());
         }
-
+        log.info("Broker add success");
     }
 
 
@@ -193,7 +195,7 @@ public class RuleEngineManagement {
                     .build());
         }
         brokerConsumers.remove(brokerId);
-
+        log.info("Broker remove success");
     }
 
     /**
