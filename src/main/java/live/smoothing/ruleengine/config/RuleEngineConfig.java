@@ -1,6 +1,7 @@
 package live.smoothing.ruleengine.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import live.smoothing.ruleengine.RuleEngineManagement;
 import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
@@ -25,6 +26,7 @@ public class RuleEngineConfig {
     private final SensorService sensorService;
     private final ErrorProducer errorProducer;
     private final RabbitTemplate rabbitTemplate;
+    private final Gson gson;
 
     @Bean
     public BrokerConsumerFactory brokerConsumerFactory() {
@@ -54,6 +56,6 @@ public class RuleEngineConfig {
 
     @Bean
     public NodeProducer nodeProducer() {
-        return new RabbitNodeProducer(rabbitTemplate);
+        return new RabbitNodeProducer(rabbitTemplate, gson);
     }
 }

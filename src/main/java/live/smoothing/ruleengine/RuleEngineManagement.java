@@ -43,29 +43,29 @@ public class RuleEngineManagement {
         this.errorProducer = errorProducer;
 
         try {
-            init();
+            synchronize();
         } catch (Exception e) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(10000);
-                        init();
-                    } catch (Exception e) {
-                        log.error("RuleEngineManagement init retry error", e);
-                        run();
-                    }
-                }
-            });
-            thread.start();
+//            Thread thread = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        Thread.sleep(10000);
+//                        synchronize();
+//                    } catch (Exception e) {
+//                        log.error("RuleEngineManagement init retry error", e);
+//                        run();
+//                    }
+//                }
+//            });
+//            thread.start();
         }
         log.info("RuleEngineManagement create success");
     }
 
     /**
-     * 생성되었을 때 Api 에 저장된 브로커 및 센서, 토픽 정보를 가져와서 초기화
+     * Device Service에서 Broker및 그에 속한 Topic들을 가져와 RuleEngine에 동기화하는 메소드
      */
-    private void init() throws Exception {
+    private void synchronize() throws Exception {
 
         List<BrokerResponseDto> brokerResponseDtos = sensorService.getBrokerGenerateRequest();
 

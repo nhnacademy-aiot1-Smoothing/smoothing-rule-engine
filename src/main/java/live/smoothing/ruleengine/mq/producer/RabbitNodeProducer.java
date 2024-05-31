@@ -15,10 +15,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 public class RabbitNodeProducer implements NodeProducer{
 
     private final RabbitTemplate rabbitTemplate;
-    private Gson gson = new Gson();
+    private final Gson gson;
 
     @Override
-    public void sendNodeMessage(String key, SensorMessage message) throws JsonProcessingException {
+    public void sendNodeMessage(String key, SensorMessage message) {
         log.info("send message to rabbitmq : {}", gson.toJson(message.getSensorAttributes()));
         rabbitTemplate.send(key, new Message(gson.toJson(message.getSensorAttributes()).getBytes()));
     }

@@ -2,13 +2,17 @@ package live.smoothing.ruleengine.sensor.entity;
 
 public class MqttSensorData implements SensorData {
 
-    private String topic;
-    private String payload;
+    private final String topic;
+    private final String payload;
+    private final Integer brokerId;
+    private final String brokerType;
 
-    public MqttSensorData(String topic, String payload) {
+    public MqttSensorData(String topic, String payload, Integer brokerId, String brokerType) {
 
         this.topic = topic;
         this.payload = payload;
+        this.brokerId = brokerId;
+        this.brokerType = brokerType;
     }
 
     @Override
@@ -24,14 +28,12 @@ public class MqttSensorData implements SensorData {
     }
 
     @Override
-    public void setTopic(String topic) {
-
-        this.topic = topic;
+    public Integer getBrokerId() {
+        return brokerId;
     }
 
     @Override
-    public void setPayload(String payload) {
-
-        this.payload = payload;
+    public String getBrokerType() {
+        return brokerType;
     }
 }
