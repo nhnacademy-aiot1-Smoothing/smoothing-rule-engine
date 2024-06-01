@@ -1,9 +1,7 @@
 package live.smoothing.ruleengine.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import live.smoothing.ruleengine.RuleEngineManagement;
-import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
 import live.smoothing.ruleengine.mq.consumer.MqttBrokerConsumerFactory;
 import live.smoothing.ruleengine.mq.producer.ErrorProducer;
@@ -22,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class RuleEngineConfig {
 
-    private final BrokerService brokerService;
     private final SensorService sensorService;
     private final ErrorProducer errorProducer;
     private final RabbitTemplate rabbitTemplate;
@@ -37,8 +34,7 @@ public class RuleEngineConfig {
     @Bean
     public RuleEngineManagement ruleEngineManagement() {
 
-        return new RuleEngineManagement(brokerService
-                ,sensorService
+        return new RuleEngineManagement(sensorService
                 , brokerConsumerFactory()
                 , nodeManager()
                 , errorProducer);
