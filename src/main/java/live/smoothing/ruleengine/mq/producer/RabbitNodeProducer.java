@@ -22,4 +22,12 @@ public class RabbitNodeProducer implements NodeProducer{
         log.info("send message to rabbitmq : {}", gson.toJson(message.getSensorAttributes()));
         rabbitTemplate.send(key, new Message(gson.toJson(message.getSensorAttributes()).getBytes()));
     }
+
+    @Override
+    public void generateQueue(String key) {
+        rabbitTemplate.execute(channel -> {
+            channel.queueDeclare(key, true, false, false, null);
+            return null;
+        });
+    }
 }

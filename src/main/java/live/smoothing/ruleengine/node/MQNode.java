@@ -20,6 +20,7 @@ public class MQNode extends Node {
         super(nodeId, 0);
         this.key = key;
         this.nodeProducer = nodeProducer;
+        this.nodeProducer.generateQueue(key);
     }
 
     @Override

@@ -41,4 +41,6 @@ public interface BrokerConsumer {
      */
     void stop() throws Exception;
 
+    boolean isRunning();
+
 }
