@@ -55,8 +55,8 @@ public class RuleEngineManagement {
         List<BrokerResponseDto> brokerResponseDtos = sensorService.getBrokerGenerateRequest();
 
         Set<Integer> notExistBrokerIds = new HashSet<>();
-        Set<Integer> newBrokerIds = brokerResponseDtos.stream().map(BrokerResponseDto::getBrokerId).collect(Collectors.toSet());
-        brokerConsumers.keySet().stream().filter(brokerId -> !newBrokerIds.contains(brokerId)).forEach(notExistBrokerIds::add);
+        Set<Integer> receivedBrokerIds = brokerResponseDtos.stream().map(BrokerResponseDto::getBrokerId).collect(Collectors.toSet());
+        brokerConsumers.keySet().stream().filter(brokerId -> !receivedBrokerIds.contains(brokerId)).forEach(notExistBrokerIds::add);
         notExistBrokerIds.forEach(this::removeBroker);
 
         brokerResponseDtos.forEach(brokerResponseDto -> {
@@ -182,6 +182,11 @@ public class RuleEngineManagement {
             brokerConsumer.start();
         } catch (Exception e) {
             log.error("Broker start error", e);
+            try {
+                brokerConsumer.stop();
+            } catch (Exception ex) {
+                log.error("Broker stop error", ex);
+            }
             sendBrokerError(BrokerErrorRequest.builder()
                     .brokerErrorType("통신에러")
                     .brokerId(request.getBrokerId())
