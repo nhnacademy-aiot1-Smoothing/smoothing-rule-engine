@@ -1,0 +1,10 @@
+###
+POST localhost:8888/api/ruleengine/broker
+Content-Type: application/json
+
+{
+    "brokerIp": "133.123.123.123",
+    "brokerPort": 1234,
+      "brokerId": 1,
+      "protocolType": "MQTT"
+}
