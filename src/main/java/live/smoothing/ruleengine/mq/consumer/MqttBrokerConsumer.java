@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
 
+    private final static String BROKER_TYPE = "MQTT";
+
     private final int brokerId;
     private final int connectionTimeout;
     private final int keepAliveInterval;
@@ -82,15 +84,15 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
     @Override
     public void connectionLost(Throwable throwable) {
         ruleEngineManagement.sendBrokerError(BrokerErrorRequest.builder()
-                        .brokerId(brokerId)
-                        .brokerErrorType(throwable.getMessage())
+                .brokerId(brokerId)
+                .brokerErrorType(throwable.getMessage())
                 .build());
     }
 
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
 
-        MqttSensorData data = new MqttSensorData(topic, new String(mqttMessage.getPayload()));
+        MqttSensorData data = new MqttSensorData(topic, new String(mqttMessage.getPayload()), brokerId, BROKER_TYPE);
         log.debug("messageArrived : {}", data);
         ruleEngineManagement.consume(data);
     }

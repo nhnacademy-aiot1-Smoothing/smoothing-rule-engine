@@ -1,6 +1,8 @@
 package live.smoothing.ruleengine.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -75,5 +77,10 @@ public class RabbitMQConfig {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
         rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
         return rabbitTemplate;
+    }
+
+    @Bean
+    public Gson gson() {
+        return new GsonBuilder().create();
     }
 }
