@@ -3,12 +3,15 @@ package live.smoothing.ruleengine.controller;
 import live.smoothing.common.exception.CommonException;
 import live.smoothing.ruleengine.RuleEngineManagement;
 import live.smoothing.ruleengine.broker.dto.BrokerGenerateRequest;
+import live.smoothing.ruleengine.broker.dto.BrokerStatusResponse;
 import live.smoothing.ruleengine.sensor.dto.TopicRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -40,4 +43,10 @@ public class RuleEngineController {
         ruleEngineManagement.unsubscribe(topicRequest.getBrokerId(), topicRequest.getTopic());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/broker/status")
+    public BrokerStatusResponse getBrokerStatus() {
+        return ruleEngineManagement.getBrokerStatus();
+    }
+
 }
