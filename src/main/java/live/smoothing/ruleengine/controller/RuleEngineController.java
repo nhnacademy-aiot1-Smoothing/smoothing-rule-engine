@@ -19,9 +19,9 @@ public class RuleEngineController {
 
     @PostMapping("/broker")
     public ResponseEntity<Void> addBroker(@RequestBody BrokerGenerateRequest brokerGenerateRequest) {
-//        throw new CommonException(HttpStatus.NOT_FOUND, "Not Found");
-        ruleEngineManagement.addBroker(brokerGenerateRequest);
-        return ResponseEntity.ok().build();
+        throw new CommonException(HttpStatus.NOT_FOUND, "Not Found");
+//        ruleEngineManagement.addBroker(brokerGenerateRequest);
+//        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/broker/{brokerId}")
