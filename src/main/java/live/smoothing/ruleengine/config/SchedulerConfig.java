@@ -13,7 +13,7 @@ public class SchedulerConfig {
 
     private final RuleEngineManagement ruleEngineManagement;
 
-    @Scheduled(fixedDelay = 300000)
+    @Scheduled(fixedDelay = 10000)
     public void ruleEngineSync() {
         log.info("Rule Engine Sync Start");
         ruleEngineManagement.synchronize();

@@ -2,6 +2,7 @@ package live.smoothing.ruleengine;
 
 import live.smoothing.ruleengine.broker.dto.BrokerGenerateRequest;
 import live.smoothing.ruleengine.broker.dto.BrokerErrorRequest;
+import live.smoothing.ruleengine.broker.dto.BrokerStatusResponse;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
 import live.smoothing.ruleengine.mq.producer.ErrorProducer;
@@ -239,5 +240,10 @@ public class RuleEngineManagement {
      */
     public void SendSensorError(SensorErrorRequest request) {
         errorProducer.sendSensorError(request);
+    }
+
+    public BrokerStatusResponse getBrokerStatus() {
+        return new BrokerStatusResponse(brokerConsumers.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e->e.getValue().isRunning()? "running" : "stop")));
+
     }
 }
