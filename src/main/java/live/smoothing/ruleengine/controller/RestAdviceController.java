@@ -14,9 +14,6 @@ public class RestAdviceController {
     @ExceptionHandler(CommonException.class)
     public ResponseEntity<ErrorResponse> handleCommonException(CommonException e, HttpServletRequest request) {
         return ResponseEntity.status(e.getStatus())
-                .body(ErrorResponse.builder()
-                        .errorMessage(e.getMessage())
-                        .path(request.getRequestURI())
-                        .build());
+                .body(e.toEntity(request.getRequestURI()));
     }
 }

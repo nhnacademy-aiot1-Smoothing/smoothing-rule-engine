@@ -2,7 +2,6 @@ package live.smoothing.ruleengine;
 
 import live.smoothing.ruleengine.broker.dto.BrokerGenerateRequest;
 import live.smoothing.ruleengine.broker.dto.BrokerErrorRequest;
-import live.smoothing.ruleengine.broker.service.BrokerService;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumer;
 import live.smoothing.ruleengine.mq.consumer.BrokerConsumerFactory;
 import live.smoothing.ruleengine.mq.producer.ErrorProducer;
@@ -13,8 +12,8 @@ import live.smoothing.ruleengine.sensor.entity.SensorData;
 import live.smoothing.ruleengine.sensor.service.SensorService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -28,16 +27,14 @@ public class RuleEngineManagement {
 
     private final Map<Integer, BrokerConsumer> brokerConsumers = new HashMap<>();
     private final Map<Integer, List<String>> topics = new HashMap<>();
-    private final BrokerService brokerService;
     private final SensorService sensorService;
     private final BrokerConsumerFactory brokerConsumerFactory;
     private final NodeManager nodeManager;
     private final ErrorProducer errorProducer;
 
-    public RuleEngineManagement(BrokerService brokerService, SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory, NodeManager nodeManager, ErrorProducer errorProducer) {
+    public RuleEngineManagement(SensorService sensorService, BrokerConsumerFactory brokerConsumerFactory, NodeManager nodeManager, ErrorProducer errorProducer) {
 
         this.sensorService = sensorService;
-        this.brokerService = brokerService;
         this.brokerConsumerFactory = brokerConsumerFactory;
         this.nodeManager = nodeManager;
         this.errorProducer = errorProducer;
@@ -45,19 +42,7 @@ public class RuleEngineManagement {
         try {
             synchronize();
         } catch (Exception e) {
-//            Thread thread = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    try {
-//                        Thread.sleep(10000);
-//                        synchronize();
-//                    } catch (Exception e) {
-//                        log.error("RuleEngineManagement init retry error", e);
-//                        run();
-//                    }
-//                }
-//            });
-//            thread.start();
+            log.error("RuleEngineManagement init error", e);
         }
         log.info("RuleEngineManagement create success");
     }
@@ -65,24 +50,50 @@ public class RuleEngineManagement {
     /**
      * Device Service에서 Broker및 그에 속한 Topic들을 가져와 RuleEngine에 동기화하는 메소드
      */
-    private void synchronize() throws Exception {
+    public void synchronize() {
 
         List<BrokerResponseDto> brokerResponseDtos = sensorService.getBrokerGenerateRequest();
 
-        for (BrokerResponseDto brokerResponseDto : brokerResponseDtos) {
-            BrokerGenerateRequest brokerGenerateRequest = BrokerGenerateRequest.builder()
-                    .brokerIp(brokerResponseDto.getBrokerIp())
-                    .brokerPort(brokerResponseDto.getBrokerPort())
-                    .brokerId(brokerResponseDto.getBrokerId())
-                    .protocolType(brokerResponseDto.getProtocolType())
-                    .build();
-            addBroker(brokerGenerateRequest);
-            Set<String> topics = brokerResponseDto.getTopics();
-            for (String topic : topics) {
-                subscribe(brokerResponseDto.getBrokerId(), topic);
+        Set<Integer> notExistBrokerIds = new HashSet<>();
+        Set<Integer> newBrokerIds = brokerResponseDtos.stream().map(BrokerResponseDto::getBrokerId).collect(Collectors.toSet());
+        brokerConsumers.keySet().stream().filter(brokerId -> !newBrokerIds.contains(brokerId)).forEach(notExistBrokerIds::add);
+        notExistBrokerIds.forEach(this::removeBroker);
+
+        brokerResponseDtos.forEach(brokerResponseDto -> {
+            if (!notExistBrokerIds.contains(brokerResponseDto.getBrokerId())) {
+                List<String> topics = this.topics.get(brokerResponseDto.getBrokerId());
+                if (topics != null) {
+                    Set<String> notExistTopics = new HashSet<>();
+                    brokerResponseDto.getTopics().forEach(topic -> {
+                        if (!topics.contains(topic)) {
+                            notExistTopics.add(topic);
+                        }
+                    });
+                    notExistTopics.forEach(topic -> unsubscribe(brokerResponseDto.getBrokerId(), topic));
+                }
             }
-        }
-        log.info("RuleEngineManagement init success");
+        });
+
+        brokerResponseDtos.forEach(brokerResponseDto -> {
+            if (!brokerConsumers.containsKey(brokerResponseDto.getBrokerId())) {
+                BrokerGenerateRequest brokerGenerateRequest = BrokerGenerateRequest.builder()
+                        .brokerIp(brokerResponseDto.getBrokerIp())
+                        .brokerPort(brokerResponseDto.getBrokerPort())
+                        .brokerId(brokerResponseDto.getBrokerId())
+                        .protocolType(brokerResponseDto.getProtocolType())
+                        .build();
+                addBroker(brokerGenerateRequest);
+            }
+
+            brokerResponseDto.getTopics().forEach(topic -> {
+                if (!topics.get(brokerResponseDto.getBrokerId()).contains(topic)) {
+                    subscribe(brokerResponseDto.getBrokerId(), topic);
+                }
+            });
+
+        });
+
+        log.info("RuleEngineManagement synchronize success");
     }
 
     /**
@@ -101,21 +112,30 @@ public class RuleEngineManagement {
      * @param brokerId Broker ID
      * @param topic    Topic
      */
-    public void subscribe(Integer brokerId, String topic) throws Exception {
+    public void subscribe(Integer brokerId, String topic) {
 
         BrokerConsumer brokerConsumer = brokerConsumers.get(brokerId);
 
-        if(isNull(brokerConsumer)) {
-            throw new RuntimeException("Broker is not exist");
+        if (isNull(brokerConsumer)) {
+            log.error("Broker is not exist");
+            return;
         }
-
-        brokerConsumer.subscribe(topic);
 
         if (topics.get(brokerId) == null) {
             topics.put(brokerId, new LinkedList<>(Collections.singletonList(topic)));
         } else {
             topics.get(brokerId).add(topic);
         }
+
+        if (brokerConsumer.isRunning()) {
+            try {
+                brokerConsumer.subscribe(topic);
+            } catch (Exception e) {
+                log.error("subscribe error", e);
+                return;
+            }
+        }
+
         log.info("topic subscribe success");
     }
 
@@ -125,14 +145,23 @@ public class RuleEngineManagement {
      * @param brokerId Broker ID
      * @param topic    Topic
      */
-    public void unsubscribe(Integer brokerId, String topic) throws Exception {
+    public void unsubscribe(Integer brokerId, String topic) {
         BrokerConsumer brokerConsumer = brokerConsumers.get(brokerId);
 
-        if(isNull(brokerConsumer)) {
-            throw new RuntimeException("Broker is not exist");
+        if (isNull(brokerConsumer)) {
+            log.error("Broker is not exist");
+            return;
         }
 
-        brokerConsumer.unsubscribe(topic);
+        if (brokerConsumer.isRunning()) {
+            try {
+                brokerConsumer.unsubscribe(topic);
+            } catch (Exception e) {
+                log.error("unsubscribe error", e);
+                return;
+            }
+        }
+
         topics.get(brokerId).remove(topic);
         log.info("topic unsubscribe success");
     }
@@ -145,16 +174,16 @@ public class RuleEngineManagement {
     public void addBroker(BrokerGenerateRequest request) {
 
         BrokerConsumer brokerConsumer = brokerConsumerFactory.create(request.getBrokerIp(), request.getBrokerPort(), request.getBrokerId(), request.getProtocolType());
+        brokerConsumer.setRuleEngineManagement(this);
+        brokerConsumers.put(request.getBrokerId(), brokerConsumer);
+        topics.put(request.getBrokerId(), new LinkedList<>());
+
         try {
             brokerConsumer.start();
-            brokerConsumers.put(request.getBrokerId(), brokerConsumer);
-            brokerConsumer.setRuleEngineManagement(this);
-            topics.put(request.getBrokerId(), new LinkedList<>());
-
         } catch (Exception e) {
             log.error("Broker start error", e);
             sendBrokerError(BrokerErrorRequest.builder()
-                    .brokerErrorType("연결실패")
+                    .brokerErrorType("통신에러")
                     .brokerId(request.getBrokerId())
                     .build());
         }
@@ -169,18 +198,13 @@ public class RuleEngineManagement {
      */
     public void removeBroker(Integer brokerId) {
 
-        if(topics.get(brokerId) != null) {
+        if (topics.get(brokerId) != null) {
             BrokerConsumer brokerConsumers = this.brokerConsumers.get(brokerId);
             topics.get(brokerId).forEach(topic -> {
                 try {
                     brokerConsumers.unsubscribe(topic);
                 } catch (Exception e) {
                     log.error("unsubscribe error", e);
-                    SendSensorError(SensorErrorRequest.builder()
-                            .sensorErrorType("구독해제실패")
-                            .createdAt(LocalDateTime.now())
-                            .topic(topic)
-                            .build());
                 }
             });
             topics.remove(brokerId);
@@ -189,10 +213,6 @@ public class RuleEngineManagement {
             brokerConsumers.get(brokerId).stop();
         } catch (Exception e) {
             log.error("Broker stop error", e);
-            sendBrokerError(BrokerErrorRequest.builder()
-                    .brokerErrorType("연결해제실패")
-                    .brokerId(brokerId)
-                    .build());
         }
         brokerConsumers.remove(brokerId);
         log.info("Broker remove success");
