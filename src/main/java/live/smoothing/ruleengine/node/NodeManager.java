@@ -35,6 +35,7 @@ public class NodeManager {
         SensorMessage message = new SensorMessage();
         message.addAttribute("topic", sensorData.getTopic());
         message.addAttribute("payload", sensorData.getPayload());
+        message.addAttribute("brokerId", sensorData.getBrokerId());
         return message;
     }
 }
