@@ -7,22 +7,25 @@ import java.util.Objects;
 
 public class BiggerChecker implements Checker {
     private final String key;
-    private final Long value;
+    private final Double value;
 
     public BiggerChecker(Parameters parameters) {
         this.key = parameters.getParam("key");
-        this.value= Long.valueOf(parameters.getParam("value"));
+        this.value = Double.valueOf(parameters.getParam("value"));
     }
 
     @Override
     public boolean check(SensorMessage message) {
         Object targetValue = message.getAttribute(key);
 
-        if(Objects.isNull(targetValue) || !(targetValue instanceof Long || targetValue instanceof Integer || targetValue instanceof Short || targetValue instanceof Byte || targetValue instanceof Double || targetValue instanceof Float)) {
+        Double messageValue = null;
+        try {
+            messageValue = Double.valueOf(targetValue.toString());
+        } catch (Exception e) {
             return false;
         }
 
 
-        return (Long) targetValue > value;
+        return messageValue > value;
     }
 }
