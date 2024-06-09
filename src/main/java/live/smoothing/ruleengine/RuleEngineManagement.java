@@ -94,6 +94,16 @@ public class RuleEngineManagement {
 
         });
 
+        brokerConsumers.forEach((brokerId, brokerConsumer) -> {
+            if (!brokerConsumer.isRunning()) {
+                try {
+                    brokerConsumer.start();
+                } catch (Exception e) {
+                    log.error("Broker start error", e);
+                }
+            }
+        });
+
         log.info("RuleEngineManagement synchronize success");
     }
 
@@ -243,7 +253,7 @@ public class RuleEngineManagement {
     }
 
     public BrokerStatusResponse getBrokerStatus() {
-        return new BrokerStatusResponse(brokerConsumers.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e->e.getValue().isRunning()? "running" : "stop")));
+        return new BrokerStatusResponse(brokerConsumers.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().isRunning() ? "running" : "stop")));
 
     }
 }
