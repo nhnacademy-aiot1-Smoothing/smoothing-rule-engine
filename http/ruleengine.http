@@ -8,3 +8,6 @@ Content-Type: application/json
       "brokerId": 1,
       "protocolType": "MQTT"
 }
+
+###
+GET localhost:8888/api/ruleengine/broker/status
