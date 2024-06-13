@@ -16,7 +16,11 @@ public class SchedulerConfig {
     @Scheduled(fixedDelay = 300000)
     public void ruleEngineSync() {
         log.info("Rule Engine Sync Start");
-        ruleEngineManagement.synchronize();
+        try {
+            ruleEngineManagement.synchronize();
+        } catch (Exception e) {
+            log.error("Rule Engine Sync Error", e);
+        }
         log.info("Rule Engine Sync End");
     }
 }
