@@ -8,8 +8,8 @@ public class MqttBrokerConsumerFactory implements BrokerConsumerFactory {
 
         return new MqttBrokerConsumer(
                 brokerId,
-                30,
-                30,
+                5,
+                1800,
                 true,
                 true,
                 brokerIp,

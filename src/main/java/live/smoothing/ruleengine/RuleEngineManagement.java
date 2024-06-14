@@ -39,13 +39,6 @@ public class RuleEngineManagement {
         this.brokerConsumerFactory = brokerConsumerFactory;
         this.nodeManager = nodeManager;
         this.errorProducer = errorProducer;
-
-        try {
-            synchronize();
-        } catch (Exception e) {
-            log.error("RuleEngineManagement init error", e);
-        }
-        log.info("RuleEngineManagement create success");
     }
 
     /**
@@ -53,7 +46,14 @@ public class RuleEngineManagement {
      */
     public void synchronize() {
 
-        List<BrokerResponseDto> brokerResponseDtos = sensorService.getBrokerGenerateRequest();
+        List<BrokerResponseDto> brokerResponseDtos;
+
+        try {
+            brokerResponseDtos = sensorService.getBrokerGenerateRequest();
+        } catch (Exception e) {
+            log.error("BrokerResponseDto get error", e);
+            brokerResponseDtos = new ArrayList<>();
+        }
 
         Set<Integer> notExistBrokerIds = new HashSet<>();
         Set<Integer> receivedBrokerIds = brokerResponseDtos.stream().map(BrokerResponseDto::getBrokerId).collect(Collectors.toSet());
