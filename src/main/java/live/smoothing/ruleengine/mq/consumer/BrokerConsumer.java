@@ -43,4 +43,6 @@ public interface BrokerConsumer {
 
     boolean isRunning();
 
+    BrokerConsumer copy();
+
 }

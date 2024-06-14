@@ -97,7 +97,17 @@ public class RuleEngineManagement {
         brokerConsumers.forEach((brokerId, brokerConsumer) -> {
             if (!brokerConsumer.isRunning()) {
                 try {
-                    brokerConsumer.start();
+                    BrokerConsumer newBrokerConsumer = brokerConsumer.copy();
+                    brokerConsumer.stop();
+                    brokerConsumers.put(brokerId, newBrokerConsumer);
+                    newBrokerConsumer.start();
+                    topics.get(brokerId).forEach(topic -> {
+                        try {
+                            newBrokerConsumer.subscribe(topic);
+                        } catch (Exception e) {
+                            log.error("subscribe error", e);
+                        }
+                    });
                 } catch (Exception e) {
                     log.error("Broker start error", e);
                 }
