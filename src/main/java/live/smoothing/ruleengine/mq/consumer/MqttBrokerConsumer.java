@@ -107,6 +107,11 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
     }
 
     @Override
+    public BrokerConsumer copy() {
+        return new MqttBrokerConsumer(brokerId, connectionTimeout, keepAliveInterval, cleanSession, automaticReconnect, brokerUri, port, clientId);
+    }
+
+    @Override
     public void connectionLost(Throwable throwable) {
         ruleEngineManagement.sendBrokerError(BrokerErrorRequest.builder()
                 .brokerId(brokerId)
