@@ -105,11 +105,11 @@ public class RuleEngineManagement {
                         try {
                             newBrokerConsumer.subscribe(topic);
                         } catch (Exception e) {
-                            log.error("subscribe error", e);
+                            log.error("sync topic error, topic = {}", topic);
                         }
                     });
                 } catch (Exception e) {
-                    log.error("Broker start error", e);
+                    log.error("sync broker error, brokerId = {}", brokerId);
                 }
             }
         });

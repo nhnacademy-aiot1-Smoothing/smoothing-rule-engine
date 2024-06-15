@@ -74,6 +74,8 @@ public class InfluxDbInsertNode extends Node {
                 Thread.currentThread().interrupt();
             }catch (NullPointerException e){
                 log.error(e.getMessage());
+            }catch (Exception e){
+                log.error("influx node error", e);
             }
         }
     }
