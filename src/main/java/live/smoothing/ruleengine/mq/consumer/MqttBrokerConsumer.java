@@ -97,7 +97,7 @@ public class MqttBrokerConsumer implements BrokerConsumer, MqttCallback {
         if (client.isConnected()) {
             client.disconnect();
         }
-        client.close();
+        client.close(true);
         isRunning = false;
     }
 
