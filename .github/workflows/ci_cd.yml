@@ -27,7 +27,7 @@ jobs:
       if: ${{ success() }}
       run : ${{ secrets.SONAR_COMMAND }}
 
-# CD to server 1
+# CD
     - name: upload file
       if: ${{ success() }}
       uses: appleboy/scp-action@master
@@ -48,5 +48,13 @@ jobs:
         username: ${{ secrets.SSH_ID }}
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
-        script_stop: true
-        script: "./start.sh"
+        script: |
+          sudo docker build -t rule-engine:latest ./ --build-arg FILE=target/rule-engine-0.0.1-SNAPSHOT.jar
+          containers=$(sudo docker ps -a | grep rule-engine | awk '{print $1}')
+          if [ -n "$containers" ]; then
+            sudo docker stop $containers
+            sudo docker rm $containers
+          else
+            echo "No containers with 'rule-engine' found."
+          fi
+          sudo docker run -d --name rule-engine-service --network=smoothing --restart always rule-engine
