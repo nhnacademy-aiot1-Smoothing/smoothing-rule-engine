@@ -25,7 +25,7 @@ public abstract class Node implements Runnable{
     protected Node(String nodeId ,int outputPortCount) {
         this.outputPortCount = outputPortCount;
         this.nodeId = nodeId;
-        this.thread = new Thread(this);
+        this.thread = new Thread(this,nodeId);
         this.inputPort = new Port(1);
         this.outputPorts = new Port[outputPortCount];
 

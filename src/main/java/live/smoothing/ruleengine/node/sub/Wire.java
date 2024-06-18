@@ -1,6 +1,8 @@
 package live.smoothing.ruleengine.node.sub;
 
 import live.smoothing.ruleengine.sensor.dto.SensorMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -11,6 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author 박영준
  */
 public class Wire {
+    private static final Logger log = LoggerFactory.getLogger(Wire.class);
     private final BlockingQueue<SensorMessage> queue;
 
     public Wire() {
@@ -24,6 +27,10 @@ public class Wire {
      * @throws InterruptedException 메시지 추가 실패시
      */
     public void put(SensorMessage message) throws InterruptedException {
+        if(queue.size() > 1000){
+            queue.take();
+            log.debug("queue size over 1000 remove first message");
+        }
         queue.put(message);
     }
 

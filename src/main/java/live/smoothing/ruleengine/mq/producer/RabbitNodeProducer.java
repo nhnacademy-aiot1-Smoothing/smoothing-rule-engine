@@ -21,7 +21,11 @@ public class RabbitNodeProducer implements NodeProducer{
     @Override
     public void sendNodeMessage(String key, SensorMessage message) {
         log.info("send message to rabbitmq : {}", gson.toJson(message.getSensorAttributes()));
-        rabbitTemplate.send(key, new Message(gson.toJson(message.getSensorAttributes()).getBytes()));
+        try {
+            rabbitTemplate.send(key, new Message(gson.toJson(message.getSensorAttributes()).getBytes()));
+        }catch (Exception e){
+            log.error("send message error : {}", e.getMessage());
+        }
     }
 
     @Override

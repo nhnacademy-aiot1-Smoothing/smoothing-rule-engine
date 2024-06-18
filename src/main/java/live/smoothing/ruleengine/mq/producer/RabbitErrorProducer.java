@@ -3,9 +3,11 @@ package live.smoothing.ruleengine.mq.producer;
 import live.smoothing.ruleengine.broker.dto.BrokerErrorRequest;
 import live.smoothing.ruleengine.sensor.dto.SensorErrorRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RabbitErrorProducer implements ErrorProducer {
@@ -15,11 +17,19 @@ public class RabbitErrorProducer implements ErrorProducer {
 
     @Override
     public void sendBrokerError(BrokerErrorRequest brokerErrorRequest) {
-        rabbitTemplate.convertAndSend(brokerErrorQueue, brokerErrorRequest);
+        try {
+            rabbitTemplate.convertAndSend(brokerErrorQueue, brokerErrorRequest);
+        }catch (Exception e){
+            log.error("send message error : {}", e.getMessage());
+        }
     }
 
     @Override
     public void sendSensorError(SensorErrorRequest sensorErrorRequest) {
-        rabbitTemplate.convertAndSend(sensorErrorQueue, sensorErrorRequest);
+        try {
+            rabbitTemplate.convertAndSend(sensorErrorQueue, sensorErrorRequest);
+        }catch (Exception e){
+            log.error("send message error : {}", e.getMessage());
+        }
     }
 }
